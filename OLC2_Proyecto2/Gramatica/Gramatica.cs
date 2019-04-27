@@ -118,11 +118,6 @@ namespace OLC2_Proyecto2.Gramatica
                 L_ID = new NonTerminal("L_ID"),
                 FIN_DECLA = new NonTerminal("FIN_DECLA"),
                 EXPRESION = new NonTerminal("EXPRESION"),
-                EXP = new NonTerminal("EXP"),
-                EX = new NonTerminal("EX"),
-                E = new NonTerminal("E"),
-                T = new NonTerminal("T"),
-                F = new NonTerminal("F"),
                 P = new NonTerminal("P"),
                 BOOL = new NonTerminal("BOOL"),
                 ASIGNA = new NonTerminal("ASIGNA"),
@@ -239,39 +234,32 @@ namespace OLC2_Proyecto2.Gramatica
                                     | Igual + EXPRESION + PuntoComa
                                     | Igual + nuevo + id + TparA + TparC + PuntoComa; //Para los objetos
             //EXPRESION
-            EXPRESION.Rule = EXPRESION + Tor + EXP
-                                    | EXPRESION + Tand + EXP
+            EXPRESION.Rule          = EXPRESION + Tor + EXPRESION
+                                    | EXPRESION + Tand + EXPRESION
                                     | Tnot + EXPRESION
-                                    | EXP;
-            EXP.Rule = EXP + Tmayor + EX
-                                    | EXP + TmayorI + EX
-                                    | EXP + TmayorI + EX
-                                    | EXP + Tmenor + EX
-                                    | EXP + TmenorI + EX
-                                    | EXP + Tigualacion + EX
-                                    | EXP + Tdiferente + EX
-                                    | EX;
-            EX.Rule = EX + Tmas + E
-                                    | EX + Tmenos + E
-                                    | E;
-            E.Rule = E + Tpor + T
-                                    | E + Tdiv + T
-                                    | T;
-            T.Rule = T + Tpot + F
-                                    | F;
-            //PRODUCCION DONDE TAMBIEN PUEDE LLAMAR METODOS
-            F.Rule = TparA + EXPRESION + TparC
+                                    | EXPRESION + Tmayor + EXPRESION
+                                    | EXPRESION + TmayorI + EXPRESION
+                                    | EXPRESION + Tmenor + EXPRESION
+                                    | EXPRESION + TmenorI + EXPRESION
+                                    | EXPRESION + Tigualacion + EXPRESION
+                                    | EXPRESION + Tdiferente + EXPRESION
+                                    | EXPRESION + Tmas + EXPRESION
+                                    | EXPRESION + Tmenos + EXPRESION
+                                    | EXPRESION + Tpor + EXPRESION
+                                    | EXPRESION + Tdiv + EXPRESION
+                                    | EXPRESION + Tpot + EXPRESION
+                                    | TparA + EXPRESION + TparC
                                     //| P + TparA + TparC
                                     //| P + TparA + EXPRESION + TparC
                                     | P + DIMENSIONES
                                     | P;
-            P.Rule = num
+            P.Rule                  = num
                                     | id
                                     | TkCadena
                                     | TkCaract
                                     | BOOL
                                     | OBJETOS;
-            BOOL.Rule = verdadero
+            BOOL.Rule               = verdadero
                                     | falso
                                     | v
                                     | f;
@@ -284,15 +272,16 @@ namespace OLC2_Proyecto2.Gramatica
             //--------------------------------------------DECLARACION DE ARREGLOS 4.7.5
             DECLA_ARRE.Rule         = AMBITO + TIPO + array + L_ID + DIMENSIONES + FIN_ARRE
                                     | TIPO + array + L_ID + DIMENSIONES + FIN_ARRE;
-            DIMENSIONES.Rule        = DIMENSIONES + VAL_DIM
-                                    | VAL_DIM;
+
+            DIMENSIONES.Rule        = MakePlusRule(DIMENSIONES,VAL_DIM);
+
             VAL_DIM.Rule            = TcorA + EXPRESION + TcorC;
 
             FIN_ARRE.Rule           = PuntoComa
                                     | Igual + OBJETOS + PuntoComa
                                     | Igual + TllaA + VAL_AA + TllaC + PuntoComa;
-            VAL_AA.Rule             = VAL_AA + Coma + VAL_AA1
-                                    | VAL_AA1;
+            VAL_AA.Rule             = MakePlusRule(VAL_AA ,Coma , VAL_AA1);
+
             VAL_AA1.Rule            = TllaA + VAA + TllaC;
 
             VAA.Rule                = MakePlusRule(VAA, Coma, EXPRESION);
@@ -332,7 +321,8 @@ namespace OLC2_Proyecto2.Gramatica
             L_PARAM1.Rule           = MakePlusRule( L_PARAM1 ,Coma ,PARAM1);
             PARAM1.Rule             = TIPO + id;
             //--------------------------------------------RETURN 4.8.9
-            RETORNO.Rule            = retorno + EXPRESION + PuntoComa;
+            RETORNO.Rule            =  retorno + PuntoComa
+                                    |  retorno + EXPRESION + PuntoComa;
             //--------------------------------------------FUNCION CON RETORNO 4.8.10
             FUNCION_CR.Rule         = AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + TllaC
                                     | AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + TllaC
@@ -402,8 +392,18 @@ namespace OLC2_Proyecto2.Gramatica
 
             #region Preferencias
             this.Root = S;
-            this.MarkPunctuation(":",";",",",".","=","(",")","{","}","[","]");
+            this.RegisterOperators(7, Associativity.Left, Tpot);
+            this.RegisterOperators(6, Associativity.Left, Tdiv, Tpor);
+            this.RegisterOperators(5, Associativity.Left, Tmas, Tmenos);
+            this.RegisterOperators(4, Associativity.Left, Tigualacion, Tdiferente, Tmenor, TmenorI, Tmayor, TmayorI);
+            this.RegisterOperators(3, Associativity.Left, Tnot);
+            this.RegisterOperators(2, Associativity.Left, Tand);
+            this.RegisterOperators(1, Associativity.Left, Tor);
 
+            this.MarkTransient(S, INSTRUCCIONES);
+
+            this.MarkPunctuation(":",";",",",".","=","(",")","{","}","[","]");
+            this.MarkPunctuation("importar","continuar", "hacer", "mientras", "comprobar", "caso", "defecto", "salir", "while", "Repeat", "for", "if", "clase","else","print","show","return","main","clase");
 
             #endregion
         }

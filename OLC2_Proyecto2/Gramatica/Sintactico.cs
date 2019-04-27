@@ -23,10 +23,13 @@ namespace OLC2_Proyecto2.Gramatica
 
             if(raiz == null)
                 return false;
-
-            generarImagen(raiz);
-            MessageBox.Show("Imagen generada correctamente");
-            return true;
+            else
+            {
+                generarImagen(raiz);
+                MessageBox.Show("Imagen generada correctamente");
+                Recorrido.ejecutar(raiz);
+                return true;
+            }
         }
 
         private static void generarImagen(ParseTreeNode raiz)
@@ -34,11 +37,6 @@ namespace OLC2_Proyecto2.Gramatica
             String grafoDOT = ControlDot.getDot(raiz);
             crear_Archivo(grafoDOT, "diego");
             generar("diego");
-            
-            //MessageBox.Show(grafoDOT);
-            //WINGRAPHVIZLib.DOT dot = new WINGRAPHVIZLib.DOT();
-            //WINGRAPHVIZLib.BinaryImage img = dot.ToPNG(grafoDOT);
-            //img.Save("AST.png");
         }
         private static void crear_Archivo(String grafo, string nombre)
         {

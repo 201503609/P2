@@ -28,9 +28,7 @@ namespace OLC2_Proyecto2
         private void compilarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bool resultado = Sintactico.analizar(txtEntrada.Text);
-            if (resultado)
-                MessageBox.Show("hola");
-            else
+            if (!resultado)
                 MessageBox.Show("Adios");
         }
     }

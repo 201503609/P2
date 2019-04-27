@@ -15,6 +15,7 @@ namespace OLC2_Proyecto2.Grafica
         public static String getDot(ParseTreeNode raiz)
         {
             grafo = "digraph G{";
+            grafo += "node[shape = \"box\"];\n";
             grafo += "nodo0[label =\"" + escapar(raiz.ToString()) + "\"];\n";
             contador = 1;
             recorrerAST("nodo0", raiz);

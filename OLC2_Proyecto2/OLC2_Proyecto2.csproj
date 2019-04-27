@@ -59,8 +59,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Grafica\ControlDot.cs" />
+    <Compile Include="Gramatica\Arreglos.cs" />
+    <Compile Include="Gramatica\Clases.cs" />
     <Compile Include="Gramatica\Gramatica.cs" />
+    <Compile Include="Gramatica\Recorrido.cs" />
     <Compile Include="Gramatica\Sintactico.cs" />
+    <Compile Include="Gramatica\Variables.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
