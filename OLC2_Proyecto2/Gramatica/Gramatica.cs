@@ -278,8 +278,9 @@ namespace OLC2_Proyecto2.Gramatica
             VAL_DIM.Rule            = TcorA + EXPRESION + TcorC;
 
             FIN_ARRE.Rule           = PuntoComa
-                                    | Igual + OBJETOS + PuntoComa
+                                    //| Igual + OBJETOS + PuntoComa
                                     | Igual + TllaA + VAL_AA + TllaC + PuntoComa;
+
             VAL_AA.Rule             = MakePlusRule(VAL_AA ,Coma , VAL_AA1);
 
             VAL_AA1.Rule            = TllaA + VAA + TllaC;
@@ -299,7 +300,7 @@ namespace OLC2_Proyecto2.Gramatica
                                     | TparA + L_PARAM + TparC;
 
             L_PARAM.Rule            = MakePlusRule(L_PARAM ,Coma ,EXPRESION);
-            //--------------------------------------------4.84 REASINACION DE VAR GLOBALES
+            //--------------------------------------------4.8.4 REASINACION DE VAR GLOBALES
             AS_OBJ.Rule             = AMBITO + OBJETOS + Igual + EXPRESION + PuntoComa
                                     | OBJETOS + Igual + EXPRESION + PuntoComa
                                     | AMBITO + OBJETOS + PuntoComa
@@ -403,7 +404,7 @@ namespace OLC2_Proyecto2.Gramatica
             this.MarkTransient(S, INSTRUCCIONES);
 
             this.MarkPunctuation(":",";",",",".","=","(",")","{","}","[","]");
-            this.MarkPunctuation("importar","continuar", "hacer", "mientras", "comprobar", "caso", "defecto", "salir", "while", "Repeat", "for", "if", "clase","else","print","show","return","main","clase");
+            this.MarkPunctuation("array","importar","continuar", "hacer", "mientras", "comprobar", "caso", "defecto", "salir", "while", "Repeat", "for", "if", "clase","else","print","show","return","main","clase");
 
             #endregion
         }

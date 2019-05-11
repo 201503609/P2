@@ -31,9 +31,6 @@ namespace OLC2_Proyecto2.Gramatica
             Console.WriteLine("Variable" + dato.nombre + " insertada");
         }
 
-
-
-
         //VERIFICAR TIPO
         public static Boolean comprobacionTipo(Variables v)
         {
@@ -74,6 +71,9 @@ namespace OLC2_Proyecto2.Gramatica
                 Console.WriteLine("EL TIPO NO ES EL ADECUADO DE " + v.nombre);
             return f;
         }
+
+
+
         //Ver si ya existe
         public static Boolean existenciaVariable(Variables v)
         {

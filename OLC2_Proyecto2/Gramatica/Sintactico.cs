@@ -27,7 +27,7 @@ namespace OLC2_Proyecto2.Gramatica
             {
                 generarImagen(raiz);
                 MessageBox.Show("Imagen generada correctamente");
-                Recorrido.ejecutar(raiz);
+                Recorrido.ejecutar(raiz,null);
                 return true;
             }
         }

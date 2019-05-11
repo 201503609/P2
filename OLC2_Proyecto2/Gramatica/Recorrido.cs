@@ -21,80 +21,90 @@ namespace OLC2_Proyecto2.Gramatica
         //Para las variables
         public static bool var = false;
         public static ArrayList variables = new ArrayList();
-        public static ArrayList dimensiones = new ArrayList();
         public static string tipo = "", ambito = "publico", valorVal = "";
+
+        //Para los arreglos
+        public static ArrayList dimensiones = new ArrayList();
+        public static string dim1 = "", dim2 = "", dim3 = "";
 
         public static string phrase;
         public static string[] words;
 
         //Recorrer el arbol
-        public static string ejecutar(ParseTreeNode root)
+        public static string ejecutar(ParseTreeNode root, Ambito anterior)
         {
             switch (root.ToString())
             {
-
-                #region INICIO
+                #region INICIO 
                 case "INICIO":
                     foreach (ParseTreeNode hijo in root.ChildNodes)
                     {
-                        ejecutar(hijo);
+                        ejecutar(hijo, null);
                     }
                     return "";
                 #endregion
 
-                //--
+                //---
                 #region CLASE
                 case "CLASE":
+                    //id + IMPORTACIONES + INS_CLA 
                     if (root.ChildNodes.Count == 3)//tiene importanciones e instrucciones
                     {
-                        //NOMBRE DE LA CLASE ACTUAL
-                        nombreClase = root.ChildNodes[0].ToString();
-                        Clases c = new Clases(nombreClase, null, null, null, null);
-                        MessageBox.Show("Nombre de la clase: " + c.nombre);
-                        Clases.insertarClase(c);
+
+                        phrase = root.ChildNodes[0].ToString();
+                        words = phrase.Split(' ');
+                        nombreClase = words[0];                     //NOMBRE DE LA CLASE ACTUAL
+                        Ambito nuevo = new Ambito(anterior);        //SE CREA EL PRIMER AMBITO CON EL ANTERIOR = a nulo
+
+                        Clases c = new Clases(nombreClase, null, null, null, null, null);    //Creamos la clase
+                        Clases.insertarClase(c);                                            //Insertarmos la clase
 
                         //HACER ALGO CON LAS IMPORTACIONES
-                        ejecutar(root.ChildNodes[1]);
+                        ejecutar(root.ChildNodes[1], nuevo);
 
                         //RECORRER LAS INSTRUCCIONES --AQUI MANDAR A LLAMAR SOLO EL MAIN
-                        ejecutar(root.ChildNodes[2]);
-
-                        //----HACER ALGO EXTRA
-
+                        ejecutar(root.ChildNodes[2], nuevo);
+                        ReporteTS.reporteErrores(nuevo);
                     }
                     else if (root.ChildNodes.Count == 2) // pueden ser dos producciones
                     {
+                        //id + INS_CLA
                         if (root.ChildNodes[1].ToString().Equals("INS_CLA"))
                         { //no tiene importanciones pero si instrucciones
-                          //NOMBRE DE LA CLASE ACTUAL
+
                             phrase = root.ChildNodes[0].ToString();
                             words = phrase.Split(' ');
-                            nombreClase = words[0];
-                            Clases c = new Clases(nombreClase, null, null, null, null);
-                            MessageBox.Show("Nombre de la clase: " + c.nombre);
-                            Clases.insertarClase(c);
+                            nombreClase = words[0];                     //NOMBRE DE LA CLASE ACTUAL
+                            Ambito nuevo = new Ambito(anterior);        //SE CREA EL PRIMER AMBITO CON EL ANTERIOR = a nulo
+
+                            Clases c = new Clases(nombreClase, null, null, null, null, null);    //Creamos la clase
+                            Clases.insertarClase(c);                                            //Insertarmos la clase
 
                             //RECORRER LAS INSTRUCCIONES --AQUI MANDAR A LLAMAR SOLO EL MAIN
-                            ejecutar(root.ChildNodes[1]);
-
-                            //----HACER ALGO EXTRA
-
+                            ejecutar(root.ChildNodes[1], nuevo);
+                            ReporteTS.reporteErrores(nuevo);
                         }
-                        else { } //tiene importacion pero no instruccion 
-                    }
-                    else if (root.ChildNodes.Count == 1) { }//CLASE VACIA
-                    return "";
-                #endregion
+                        //id + IMPORTACIONES
+                        else    //tiene importacion pero no instruccion 
+                        {
+                            phrase = root.ChildNodes[0].ToString();
+                            words = phrase.Split(' ');
+                            nombreClase = words[0];                     //NOMBRE DE LA CLASE ACTUAL
+                            Ambito nuevo = new Ambito(anterior);        //SE CREA EL PRIMER AMBITO CON EL ANTERIOR = a nulo
 
-                //--
-                #region IMPORTACIONES
-                case "IMPORTACIONES":
-                    foreach (ParseTreeNode hijo in root.ChildNodes)
-                    {
-                        import = true;
-                        ejecutar(hijo);
-                        import = false;
-                        //Hacer algo con las importaciones
+                            Clases c = new Clases(nombreClase, null, null, null, null, null);    //Creamos la clase
+                            Clases.insertarClase(c);                                            //Insertarmos la clase
+                        }
+                    }
+                    //id   la clase esta vacia
+                    else if (root.ChildNodes.Count == 1) {
+                        phrase = root.ChildNodes[0].ToString();
+                        words = phrase.Split(' ');
+                        nombreClase = words[0];                     //NOMBRE DE LA CLASE ACTUAL
+                        Ambito nuevo = new Ambito(anterior);        //SE CREA EL PRIMER AMBITO CON EL ANTERIOR = a nulo
+
+                        Clases c = new Clases(nombreClase, null, null, null, null, null);    //Creamos la clase
+                        Clases.insertarClase(c);                                            //Insertarmos la clase                        
                     }
                     return "";
                 #endregion
@@ -103,29 +113,28 @@ namespace OLC2_Proyecto2.Gramatica
                 case "INS_CLA":
                     foreach (ParseTreeNode hijo in root.ChildNodes)
                     {
-                        ejecutar(hijo);
+                        ejecutar(hijo, anterior);
                     }
                     return "";
                 #endregion
 
-                //--
+                //--- FALTA VER LOS OBJETOS
                 #region DECLARACION
                 case "DECLARACIONES":
                     ///TIPO + L_ID + FIN_DECLA
                     if (root.ChildNodes.Count == 3)
                     {
-                        //Obtener Ambito
-                        ambito = "publico";
-                        //Obtener tipo
-                        tipo = ejecutar(root.ChildNodes[0]);
+                        ambito = "publico";                                 //Obtener Ambito    
+                        tipo = ejecutar(root.ChildNodes[0], anterior);      //Obtener tipo
+
                         //Obtener Ids
                         var = true;
                         variables.Clear();
-                        ejecutar(root.ChildNodes[1]);
+                        ejecutar(root.ChildNodes[1], anterior);
                         var = false;
-                        //Obtener valor
-                        valorVal = ejecutar(root.ChildNodes[2]);
-                        MessageBox.Show(" V: " + valorVal);
+
+                        valorVal = ejecutar(root.ChildNodes[2], anterior);            //Obtener valor
+                        MessageBox.Show(" Valor: " + valorVal);
 
                         //Almacenar Variables en alguna lista o algo
                         Variables vvv;
@@ -134,12 +143,19 @@ namespace OLC2_Proyecto2.Gramatica
                             if (!valorVal.Equals(";"))
                             {
                                 vvv = new Variables(hijo, tipo, ambito, valorVal, nombreClase);
-                                Clases.insertarVariableC(nombreClase, vvv);
+                                Boolean fInserto = Ambito.insertarVarConValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
+                                if (fInserto == true)
+                                    Clases.insertarVariableEnClase(nombreClase, vvv);
+
+
                             }
                             else
                             {
-                                vvv = new Variables(hijo, tipo, ambito, "", nombreClase);
-                                Clases.insertarVariableC1(nombreClase, vvv);
+                                vvv = new Variables(hijo, tipo, ambito, valorVal, nombreClase);
+                                Boolean fInserto = Ambito.insertarVarSinValor(vvv, anterior);                  //VER QUE LA VARIABLE NO EXISTA
+                                if (fInserto == true)
+                                    Clases.insertarVariableEnClase(nombreClase, vvv);
+
                             }
                         }
                         //Limpiar variables
@@ -148,18 +164,17 @@ namespace OLC2_Proyecto2.Gramatica
                     //AMBITO + TIPO + L_ID + FIN_DECLA
                     else if (root.ChildNodes.Count == 4)// TIENE TODO
                     {
-                        //Obtener ambito 
-                        ambito = ejecutar(root.ChildNodes[0]);
-                        //Obtener tipo
-                        tipo = ejecutar(root.ChildNodes[0]);
+                        ambito = ejecutar(root.ChildNodes[0], anterior);  //Obtener ambito 
+                        tipo = ejecutar(root.ChildNodes[1], anterior);    //Obtener tipo
+
                         //Obtener Ids
                         var = true;
                         variables.Clear();
-                        ejecutar(root.ChildNodes[1]);
+                        ejecutar(root.ChildNodes[2], anterior);
                         var = false;
-                        //Obtener valor
-                        valorVal = ejecutar(root.ChildNodes[2]);
-                        MessageBox.Show(" V: " + valorVal);
+
+                        valorVal = ejecutar(root.ChildNodes[3], anterior);        //Obtener valor
+                        MessageBox.Show(" Valor: " + valorVal);
 
                         //Almacenar Variables en alguna lista o algo
                         Variables vvv;
@@ -168,12 +183,16 @@ namespace OLC2_Proyecto2.Gramatica
                             if (!valorVal.Equals(";"))
                             {
                                 vvv = new Variables(hijo, tipo, ambito, valorVal, nombreClase);
-                                Clases.insertarVariableC(nombreClase, vvv);
+                                Boolean fInserto = Ambito.insertarVarConValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
+                                if (fInserto == true)
+                                    Clases.insertarVariableEnClase(nombreClase, vvv);
                             }
                             else
                             {
-                                vvv = new Variables(hijo, tipo, ambito, "", nombreClase);
-                                Clases.insertarVariableC1(nombreClase, vvv);
+                                vvv = new Variables(hijo, tipo, ambito, valorVal, nombreClase);
+                                Boolean fInserto = Ambito.insertarVarSinValor(vvv, anterior);                  //VER QUE LA VARIABLE NO EXISTA
+                                if (fInserto == true)
+                                    Clases.insertarVariableEnClase(nombreClase, vvv);
                             }
                         }
                         //Limpiar variables
@@ -201,39 +220,40 @@ namespace OLC2_Proyecto2.Gramatica
                 case "L_ID":
                     foreach (ParseTreeNode hijo in root.ChildNodes)
                     {
-                        if (var == true)
+                        if (var == true)                //SI SON VARIABLES
                         {
                             phrase = hijo.ToString();
                             words = phrase.Split(' ');
-                            variables.Add(words[0]);
+                            variables.Add(words[0].ToLower());
                         }
-                        else if (import == true)
+                        else if (import == true)        //SI SON IMPORT
                         {
                             phrase = hijo.ToString();
                             words = phrase.Split(' ');
-                            importanciones.Add(words[0]);
+                            importanciones.Add(words[0].ToLower());
                         }
                     }
                     return "";
                 #endregion
 
+                //--- FALTA VER LOS OBJETOS
                 #region FIN_DECLA
                 case "FIN_DECLA":
                     if (root.ChildNodes.Count == 0)// ES SOLO UNA DECLARACION ";"
                         return ";";
                     else if (root.ChildNodes.Count == 1) //TIENE ASIGNACION
-                        return ejecutar(root.ChildNodes[0]);
+                        return ejecutar(root.ChildNodes[0], anterior);
                     else if (root.ChildNodes.Count == 2) // Es objeto
                     {
-                        phrase = root.ChildNodes[1].ToString();
-                        words = phrase.Split(' ');
-                        return words[0];
+                        //phrase = root.ChildNodes[1].ToString();
+                        //words = phrase.Split(' ');
+                        //return words[0];
+                        return ";";
                     }
                     else
                         return "";
                 #endregion
 
-                //--
                 #region EXPRESION
                 case "EXPRESION":
                     //EXPRESION SIMBOLO EXPRESION
@@ -242,57 +262,77 @@ namespace OLC2_Proyecto2.Gramatica
                         phrase = root.ChildNodes[1].ToString();
                         words = phrase.Split(' ');
                         if (words[0].Equals("||"))
-                            return ComprobarLogico(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]), "||");
+                            return ComprobarLogico(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior), "||");
                         else if (words[0].Equals("&&"))
-                            return ComprobarLogico(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]), "&&");
+                            return ComprobarLogico(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior), "&&");
                         //----RELACIONALES
                         else if (words[0].Equals(">"))
-                            return ComprobarMayor(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarMayor(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals(">="))
-                            return ComprobarMayorI(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarMayorI(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("<"))
-                            return ComprobarMenor(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarMenor(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("<="))
-                            return ComprobarMenorI(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarMenorI(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("=="))
-                            return ComprobarIgual(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarIgual(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("!="))
-                            return ComprobarDiferente(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarDiferente(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         //----ARITMETICOS
                         else if (words[0].Equals("+"))
-                            return ComprobarSuma(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarSuma(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("-"))
-                            return ComprobarResta(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarResta(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("*"))
-                            return ComprobarMulti(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarMulti(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("/"))
-                            return ComprobarDivision(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarDivision(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                         else if (words[0].Equals("^"))
-                            return ComprobarPotencia(ejecutar(root.ChildNodes[0]), ejecutar(root.ChildNodes[2]));
+                            return ComprobarPotencia(ejecutar(root.ChildNodes[0], anterior), ejecutar(root.ChildNodes[2], anterior));
                     }
                     else if (root.ChildNodes.Count == 2)
                     {
                         //P DIMENSIONES
                         if (root.ChildNodes[0].ToString().Equals("P"))
                         {
-
+                            //----- ESTO ES UN ARREGLO
+                            string nombreArr = ejecutar(root.ChildNodes[0], anterior);
+                            if (nombreArr.Contains("@@") )
+                            {
+                                nombreArr = nombreArr.Substring(2);
+                            }
+                            //----- OBTENER DIMENSIONES
+                            dimensiones.Clear();
+                            ejecutar(root.ChildNodes[1], anterior);
+                            obtenerDimensionesArreglo(anterior);
+                            //----- OBTENER VALOR DEL ARREGLO
+                            Arreglos nn = new Arreglos(nombreArr, "", "", "", dimensiones.Count, dim1, dim2, dim3, null, 0);
+                            string esAlgo = Ambito.obtenerValorArregloPos(nn, anterior);
+                            if (esAlgo.Contains("??") )
+                            {
+                                return "";
+                            }
+                            else
+                            {
+                                return esAlgo;
+                            }
                         }
                         // not EXPR
                         else
-                            return ComprobarLogico(root.ChildNodes[1].ToString(), "00", "!");
+                            return ComprobarLogico(ejecutar(root.ChildNodes[1], anterior), "00", "!");
 
                     }
                     else if (root.ChildNodes.Count == 1)
                     {
-                        //EXPRESION
+                        // ( EXPRESION )
                         if (root.ChildNodes[0].ToString().Equals("EXPRESION"))
                         {
-                            return ejecutar(root.ChildNodes[0]);
+                            return ejecutar(root.ChildNodes[0], anterior);
                         }
                         //P
                         else
                         {
-                            return ejecutar(root.ChildNodes[0]);
+                            return ejecutar(root.ChildNodes[0], anterior);
                         }
                     }
                     return "";
@@ -302,342 +342,24 @@ namespace OLC2_Proyecto2.Gramatica
                 case "P":
                     if (root.ChildNodes[0].ToString().Equals("BOOL"))
                     {
-                        return ejecutar(root.ChildNodes[0]);
+                        return ejecutar(root.ChildNodes[0], anterior);
                     }
                     else if (root.ChildNodes[0].ToString().Equals("OBJETOS"))
                     {
-                        return ejecutar(root.ChildNodes[0]);
+                        return ejecutar(root.ChildNodes[0], anterior);
                     }
                     else
                     {
                         phrase = root.ChildNodes[0].ToString();
                         words = phrase.Split(' ');
                         if (words[1].Contains("TkCadena"))
-                            return "\"" + words[0] + "\"";
+                            return "\"" + words[0].ToLower() + "\"";
                         else if (words[1].Contains("TkCarac"))
                         {
                             return "'" + words[0] + "'";
                         }
                         else if (words[1].Contains("id"))
-                            return "@@" + words[0];
-                        else
-                            return words[0];
-                    }
-                #endregion
-
-                #region BOOL
-                case "BOOL":
-                    phrase = root.ChildNodes[0].ToString();
-                    words = phrase.Split(' ');
-                    if (words[0].ToLower().Equals("verdadero") || words[0].ToLower().Equals("true"))
-                        return "verdadero";
-                    else if (words[0].Contains("falso") || words[0].Contains("false"))
-                        return "falso";
-                    else
-                        return words[0];
-                #endregion
-                    
-                #region DECLA_ARRE
-                case "DECLA_ARRE":
-                    //AMBITO + TIPO + array + L_ID + DIMENSIONES + FIN_ARRE
-                    if(root.ChildNodes.Count == 6)
-                    {
-                        //Obtener Ambito
-                        ambito = ejecutar(root.ChildNodes[0]);
-                        //Obtener tipo
-                        tipo = ejecutar(root.ChildNodes[1]);
-                        //Obtener Ids
-                        var = true;
-                        variables.Clear();
-                        ejecutar(root.ChildNodes[3]);
-                        var = false;
-                        //Dimensiones
-                        dimensiones.Clear();
-                        ejecutar(root.ChildNodes[4]);
-                        //FIN ARRE
-                        //Almacenar Variables en alguna lista o algo
-                        Variables vvv;
-                        foreach (String hijo in variables)
-                        {
-                            if (!valorVal.Equals(";"))
-                            {
-                                
-                            }
-                            else
-                            {
-                                
-                            }
-                        }
-                        MessageBox.Show("DIMENSIONES: " + dimensiones.Count);
-                        //FIN ARRE
-
-                    }
-                    //TIPO + array + L_ID + DIMENSIONES + FIN_ARRE;
-                    else if(root.ChildNodes.Count == 5)
-                    {
-
-                    }
-                    return "";
-                #endregion
-
-                #region DIMENSIONES
-                case "DIMENSIONES":
-                    foreach (ParseTreeNode hijo in root.ChildNodes)
-                    {
-                        string h = ejecutar(root.ChildNodes[0]);
-                        dimensiones.Add(h);
-                    }
-                    return "";
-                #endregion
-
-                #region VAL_DIM
-                case "VAL_DIM":
-                    return ejecutar(root.ChildNodes[0]);
-                #endregion
-
-                #region MAIN
-                case "MAIN":
-                    if (root.ChildNodes.Count == 1 )
-                    {
-                        ejecutarMain(root.ChildNodes[0]);
-                    }
-                    return "";
-                #endregion
-                default:
-                    return "";
-
-
-
-            }
-        }
-
-        //Recorrer el arbol
-        public static string ejecutarMain(ParseTreeNode root)
-        {
-            switch (root.ToString())
-            {
-                //-------------------INSTRUCCIONES
-                #region INS
-                case "INS_CLA":
-                    foreach (ParseTreeNode hijo in root.ChildNodes)
-                    {
-                        ejecutarMain(hijo);
-                    }
-                    return "";
-                #endregion
-
-                //-------------------DECLARACIONES --FALTA
-                #region DECLARACION
-                case "DECLARACIONES":
-                    ///TIPO + L_ID + FIN_DECLA
-                    if (root.ChildNodes.Count == 3)
-                    {
-                        //Obtener Ambito
-                        ambito = "publico";
-                        //Obtener tipo
-                        tipo = ejecutarMain(root.ChildNodes[0]);
-                        //Obtener Ids
-                        var = true;
-                        variables.Clear();
-                        ejecutarMain(root.ChildNodes[1]);
-                        var = false;
-                        //Obtener valor
-                        valorVal = ejecutarMain(root.ChildNodes[2]);
-                        MessageBox.Show(" V: " + valorVal);
-
-                        //Almacenar Variables en alguna lista o algo
-                        Variables vvv;
-                        foreach (String hijo in variables)
-                        {
-                            if (!valorVal.Equals(";"))
-                            {
-                                vvv = new Variables(hijo, tipo, ambito, valorVal, nombreClase);
-                                Clases.insertarVariableC(nombreClase, vvv);
-                            }
-                            else
-                            {
-                                vvv = new Variables(hijo, tipo, ambito, "", nombreClase);
-                                Clases.insertarVariableC1(nombreClase, vvv);
-                            }
-                        }
-                        //Limpiar variables
-                        ambito = tipo = valorVal = "";
-                    }
-                    //AMBITO + TIPO + L_ID + FIN_DECLA
-                    else if (root.ChildNodes.Count == 4)// TIENE TODO
-                    {
-                        //Obtener ambito 
-                        ambito = ejecutarMain(root.ChildNodes[0]);
-                        //Obtener tipo
-                        tipo = ejecutarMain(root.ChildNodes[0]);
-                        //Obtener Ids
-                        var = true;
-                        variables.Clear();
-                        ejecutarMain(root.ChildNodes[1]);
-                        var = false;
-                        //Obtener valor
-                        valorVal = ejecutarMain(root.ChildNodes[2]);
-                        MessageBox.Show(" V: " + valorVal);
-
-                        //Almacenar Variables en alguna lista o algo
-                        Variables vvv;
-                        foreach (String hijo in variables)
-                        {
-                            if (!valorVal.Equals(";"))
-                            {
-                                vvv = new Variables(hijo, tipo, ambito, valorVal, nombreClase);
-                                Clases.insertarVariableC(nombreClase, vvv);
-                            }
-                            else
-                            {
-                                vvv = new Variables(hijo, tipo, ambito, "", nombreClase);
-                                Clases.insertarVariableC1(nombreClase, vvv);
-                            }
-                        }
-                        //Limpiar variables
-                        ambito = tipo = valorVal = "";
-                    }
-                    return "";
-                #endregion
-
-                #region AMBITO
-                case "AMBITO":
-                    phrase = root.ChildNodes[0].ToString();
-                    words = phrase.Split(' ');
-                    return words[0].ToLower();
-                #endregion
-
-                #region TIPO
-                case "TIPO":
-                    phrase = root.ChildNodes[0].ToString();
-                    words = phrase.Split(' ');
-                    return words[0].ToLower();
-                #endregion
-
-                //--
-                #region L_ID
-                case "L_ID":
-                    foreach (ParseTreeNode hijo in root.ChildNodes)
-                    {
-                        if (var == true)
-                        {
-                            phrase = hijo.ToString();
-                            words = phrase.Split(' ');
-                            variables.Add(words[0]);
-                        }
-                        else if (import == true)
-                        {
-                            phrase = hijo.ToString();
-                            words = phrase.Split(' ');
-                            importanciones.Add(words[0]);
-                        }
-                    }
-                    return "";
-                #endregion
-
-                #region FIN_DECLA
-                case "FIN_DECLA":
-                    if (root.ChildNodes.Count == 0)// ES SOLO UNA DECLARACION ";"
-                        return ";";
-                    else if (root.ChildNodes.Count == 1) //TIENE ASIGNACION
-                        return ejecutarMain(root.ChildNodes[0]);
-                    else if (root.ChildNodes.Count == 2) // Es objeto
-                    {
-                        phrase = root.ChildNodes[1].ToString();
-                        words = phrase.Split(' ');
-                        return words[0];
-                    }
-                    else
-                        return "";
-                #endregion
-
-                //--
-                #region EXPRESION
-                case "EXPRESION":
-                    //EXPRESION SIMBOLO EXPRESION
-                    if (root.ChildNodes.Count == 3)
-                    {
-                        phrase = root.ChildNodes[1].ToString();
-                        words = phrase.Split(' ');
-                        if (words[0].Equals("||"))
-                            return ComprobarLogico(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]), "||");
-                        else if (words[0].Equals("&&"))
-                            return ComprobarLogico(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]), "&&");
-                        //----RELACIONALES
-                        else if (words[0].Equals(">"))
-                            return ComprobarMayor(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals(">="))
-                            return ComprobarMayorI(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("<"))
-                            return ComprobarMenor(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("<="))
-                            return ComprobarMenorI(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("=="))
-                            return ComprobarIgual(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("!="))
-                            return ComprobarDiferente(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        //----ARITMETICOS
-                        else if (words[0].Equals("+"))
-                            return ComprobarSuma(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("-"))
-                            return ComprobarResta(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("*"))
-                            return ComprobarMulti(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("/"))
-                            return ComprobarDivision(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                        else if (words[0].Equals("^"))
-                            return ComprobarPotencia(ejecutarMain(root.ChildNodes[0]), ejecutarMain(root.ChildNodes[2]));
-                    }
-                    else if (root.ChildNodes.Count == 2)
-                    {
-                        //P DIMENSIONES
-                        if (root.ChildNodes[0].ToString().Equals("P"))
-                        {
-
-                        }
-                        // not EXPR
-                        else
-                            return ComprobarLogico(root.ChildNodes[1].ToString(), "00", "!");
-
-                    }
-                    else if (root.ChildNodes.Count == 1)
-                    {
-                        //EXPRESION
-                        if (root.ChildNodes[0].ToString().Equals("EXPRESION"))
-                        {
-                            return ejecutarMain(root.ChildNodes[0]);
-                        }
-                        //P
-                        else
-                        {
-                            return ejecutarMain(root.ChildNodes[0]);
-                        }
-                    }
-                    return "";
-                #endregion
-
-                #region P
-                case "P":
-                    if (root.ChildNodes[0].ToString().Equals("BOOL"))
-                    {
-                        return ejecutarMain(root.ChildNodes[0]);
-                    }
-                    else if (root.ChildNodes[0].ToString().Equals("OBJETOS"))
-                    {
-                        return ejecutarMain(root.ChildNodes[0]);
-                    }
-                    else
-                    {
-                        phrase = root.ChildNodes[0].ToString();
-                        words = phrase.Split(' ');
-                        if (words[1].Contains("TkCadena"))
-                            return "\"" + words[0] + "\"";
-                        else if (words[1].Contains("TkCarac"))
-                        {
-                            return "'" + words[0] + "'";
-                        }
-                        else if (words[1].Contains("id"))
-                            return "@@" + words[0];
+                            return "@@" + words[0].ToLower();
                         else
                             return words[0];
                     }
@@ -659,57 +381,127 @@ namespace OLC2_Proyecto2.Gramatica
                 case "ASIGNA":
                     //id + Igual + EXPRESION + PuntoComa
                     string n, v;
+
                     //NOMBRE DE LA VARIABLE 0 
                     phrase = root.ChildNodes[0].ToString();
                     words = phrase.Split(' ');
                     n = words[0];
-                    //VALOR DE LA VARIABLE
-                    v = ejecutarMain(root.ChildNodes[1]);
+
+                    v = ejecutar(root.ChildNodes[1], anterior);       //VALOR DE LA VARIABLE
+
                     //GUARDAR VALOR DE LA ASIGNACION
-                    Clases.modificarValorVariable(nombreClase, n, v);
+                    Variables n1 = new Variables(n, "", "", v, "");
+                    Boolean f = Ambito.CambiarValorVariable(anterior, n1);
+
                     return "";
                 #endregion
 
+                #region INCREMENTO
+                case "INCREMENTO":
+                    //P + incremento + PuntoComa;
+                    string incre = ejecutar(root.ChildNodes[0], anterior);
+                    return realizarIncremento(anterior, incre);
+                #endregion
+
+                #region DECREMENTO
+                case "DECREMENTO":
+                    //P + incremento + PuntoComa;
+                    string decre = ejecutar(root.ChildNodes[0], anterior);
+                    return realizarDecremento(anterior, decre);
+                #endregion
+
+                ///-------------- ARREGLO
                 #region DECLA_ARRE
                 case "DECLA_ARRE":
-                    //AMBITO + TIPO + array + L_ID + DIMENSIONES + FIN_ARRE
-                    if (root.ChildNodes.Count == 6)
+                    //AMBITO + TIPO + array + L_ID + DIMENSIONES + FIN_ARRE  5
+                    if (root.ChildNodes.Count() == 5)
                     {
-                        //Obtener Ambito
-                        ambito = ejecutarMain(root.ChildNodes[0]);
-                        //Obtener tipo
-                        tipo = ejecutarMain(root.ChildNodes[1]);
+                        ambito = tipo = valorVal = "";
+                        ambito = ejecutar(root.ChildNodes[0], anterior);     //Obtener Ambito    
+                        tipo = ejecutar(root.ChildNodes[1], anterior);      //Obtener tipo
+
                         //Obtener Ids
                         var = true;
                         variables.Clear();
-                        ejecutarMain(root.ChildNodes[3]);
+                        ejecutar(root.ChildNodes[2], anterior);
                         var = false;
+
                         //Dimensiones
                         dimensiones.Clear();
-                        ejecutarMain(root.ChildNodes[4]);
-                        //FIN ARRE
-                        //Almacenar Variables en alguna lista o algo
-                        Variables vvv;
+                        ejecutar(root.ChildNodes[3], anterior);
+
+                        //Valor
+                        valorVal = ejecutar(root.ChildNodes[4], anterior);            //Obtener valor
+                        MessageBox.Show("ValArr: " + valorVal);
+
+                        //Almacenar los arreglos en alguna lista o algo
+                        Arreglos vvv;
                         foreach (String hijo in variables)
                         {
                             if (!valorVal.Equals(";"))
                             {
+                                obtenerDimensionesArreglo(anterior);                        // ---OBTENER LAS DIMENSIONES DEL ARREGLO
+                                ArrayList nue = obtenerValoresArreglo(anterior,valorVal);   // ---OBTENER LOS VALORES DEL ARREGLO
+                                vvv = new Arreglos(hijo, tipo, ambito, nombreClase, dimensiones.Count, dim1, dim2, dim3, nue, nue.Count);
 
+                                Boolean fInserto = Ambito.insertarArrConValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
                             }
                             else
                             {
-
+                                obtenerDimensionesArreglo(anterior);        // ---OBTENER LAS DIMENSIONES DEL ARREGLO
+                                vvv = new Arreglos(hijo, tipo, ambito, nombreClase, dimensiones.Count, dim1, dim2, dim3, null, 0);
+                                
+                                Boolean fInserto = Ambito.insertarArrSinValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
                             }
                         }
-                        MessageBox.Show("DIMENSIONES: " + dimensiones.Count);
-                        //FIN ARRE
-
+                        
+                        ambito = tipo = valorVal = dim1 = dim2 = dim3 = "";     //Limpiar variables
                     }
-                    //TIPO + array + L_ID + DIMENSIONES + FIN_ARRE;
-                    else if (root.ChildNodes.Count == 5)
+                    //TIPO + array + L_ID + DIMENSIONES + FIN_ARRE 4
+                    else if (root.ChildNodes.Count() == 4)
                     {
+                        ambito = tipo = valorVal = "";
+                        ambito = "publico";                                 //Obtener Ambito    
+                        tipo = ejecutar(root.ChildNodes[0], anterior);      //Obtener tipo
 
+                        //Obtener Ids
+                        var = true;
+                        variables.Clear();
+                        ejecutar(root.ChildNodes[1], anterior);
+                        var = false;
+
+                        //Dimensiones
+                        dimensiones.Clear();
+                        ejecutar(root.ChildNodes[2], anterior);
+
+                        //Valor
+                        valorVal = ejecutar(root.ChildNodes[3], anterior);            //Obtener valor
+                        MessageBox.Show("ValArr: " + valorVal);
+
+                        //Almacenar los arreglos en alguna lista o algo
+                        Arreglos vvv;
+                        foreach (String hijo in variables)
+                        {
+                            if (!valorVal.Equals(";"))
+                            {
+                                obtenerDimensionesArreglo(anterior);                        // ---OBTENER LAS DIMENSIONES DEL ARREGLO
+                                ArrayList nue = obtenerValoresArreglo(anterior, valorVal);  // ---OBTENER LOS VALORES DEL ARREGLO
+                                vvv = new Arreglos(hijo, tipo, ambito, nombreClase, dimensiones.Count, dim1, dim2, dim3, nue, nue.Count);
+
+                                Boolean fInserto = Ambito.insertarArrConValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
+                            }
+                            else
+                            {
+                                obtenerDimensionesArreglo(anterior);        // ---OBTENER LAS DIMENSIONES DEL ARREGLO
+                                vvv = new Arreglos(hijo, tipo, ambito, nombreClase, dimensiones.Count, dim1, dim2, dim3, null, 0);
+
+                                Boolean fInserto = Ambito.insertarArrSinValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
+                            }
+                        }
+
+                        ambito = tipo = valorVal = dim1 = dim2 = dim3 = "";     //Limpiar variables
                     }
+                    
                     return "";
                 #endregion
 
@@ -717,25 +509,100 @@ namespace OLC2_Proyecto2.Gramatica
                 case "DIMENSIONES":
                     foreach (ParseTreeNode hijo in root.ChildNodes)
                     {
-                        string h = ejecutarMain(root.ChildNodes[0]);
-                        dimensiones.Add(h);
+                        ejecutar(hijo, anterior);
                     }
                     return "";
                 #endregion
 
                 #region VAL_DIM
                 case "VAL_DIM":
-                    return ejecutarMain(root.ChildNodes[0]);
+                    string valDim = ejecutar(root.ChildNodes[0], anterior);
+                    dimensiones.Add(valDim);
+                    return "";
                 #endregion
 
+                #region FIN_ARRE
+                case "FIN_ARRE":
+                    if (root.ChildNodes.Count == 0)// ES SOLO UNA DECLARACION ";"
+                        return ";";
+                    else if (root.ChildNodes.Count == 1) //TIENE ASIGNACION
+                        return ejecutar(root.ChildNodes[0], anterior);
+                    else
+                        return "";
+                #endregion
+
+                #region VAL_AA
+                case "VAL_AA":
+                    string di1 = "";
+                    int die1 = 0;
+                    foreach (ParseTreeNode hijo in root.ChildNodes)
+                    {
+                        if (die1 != 0)
+                            di1 += ",";
+                        di1 += ejecutar(hijo, anterior);
+                        die1++;
+                    }
+                    return di1;
+                #endregion
+
+                #region VAL_AA1
+                case "VAL_AA1":
+                    return ejecutar(root.ChildNodes[0],anterior);
+                #endregion
+
+                #region VAA
+                case "VAA":
+                    string di = "";
+                    int die = 0;
+                    foreach (ParseTreeNode hijo in root.ChildNodes)
+                    {
+                        if (die != 0)
+                            di += ",";
+                        di += ejecutar(hijo, anterior);
+                        die++; 
+                    }
+                    return di;
+                #endregion
+
+                //--REASIGNACION
+                #region USO_ARRE
+                case "USO_ARRE":
+                    //  id + DIMENSIONES + Igual + EXPRESION + PuntoComa;
+                    string nomArre = "";
+                    phrase = root.ChildNodes[0].ToString();
+                    words = phrase.Split(' ');
+                    nomArre = words[0];
+
+                    //Dimensiones
+                    dimensiones.Clear();
+                    ejecutar(root.ChildNodes[1], anterior);
+
+                    //Valor
+                    valorVal = ejecutar(root.ChildNodes[2], anterior);            //Obtener valor
+                    MessageBox.Show(nomArre+" ValArr: " + valorVal);
+
+                    //CAMBIAR VALOR
+                    obtenerDimensionesArreglo(anterior);
+                    ArrayList emergencia = new ArrayList();
+                    emergencia.Add(valorVal);
+                    Arreglos nuevoA = new Arreglos(nomArre, "", "","",dimensiones.Count,dim1, dim2, dim3,emergencia,emergencia.Count);
+                    if (1+1 == 2)
+                    {
+                        Boolean fInserto = Ambito.asignarValorArreglo(nuevoA, anterior, valorVal);
+                    }
+                    valorVal = dim1 = dim2 = dim3 = "";
+                    return "";
+                #endregion
+
+                ///-------------- FIN ARREGLO
                 default:
                     return "";
-
-
+                
 
             }
         }
 
+        
 
 
         //---------COMPROBACION LOGICA
@@ -750,36 +617,49 @@ namespace OLC2_Proyecto2.Gramatica
             MessageBox.Show("1." + val1 + " 2." + val2);
 
             #region OBTENER
+            //objetos
+
             //VERIFICAR PRIMERO SI ES ID, PARA LUEGO PODER ANALIZAR SU CONTENIDO
             //id
             if (val1.StartsWith("@@"))
             {
-                v1 = val1.Substring(2);
-                val1 = Clases.obtenerValorVariable(nombreClase, v1);
+                val1 = val1.Substring(2);
+                v1 = Clases.obtenerValorVariable(nombreClase, val1);
             }
             if (val2.StartsWith("@@"))
             {
-                v2 = val2.Substring(2);
-                val2 = Clases.obtenerValorVariable(nombreClase, v2);
+                val2 = val2.Substring(2);
+                v2 = Clases.obtenerValorVariable(nombreClase, val2);
             }
-            //objetos
             //Arreglo
 
             //--------VALORES NO VALIDOS
             //Double
             if (Double.TryParse(val1, out valorNumeri) ||
                 Double.TryParse(val2, out valorNumeri))
+            {
+                Console.WriteLine("No se puede hacer uso de objetos de tipo Double para la operacion logica");
                 return "????";
+            }
             //num
             else if (int.TryParse(val1, out valorNumerico) ||
                 int.TryParse(val2, out valorNumerico1))
+            {
+                Console.WriteLine("No se puede hacer uso de objetos de tipo Int para la operacion logica");
                 return "????";
+            }
             //caracter
             else if (val1.StartsWith("'") || val2.StartsWith("'"))
+            {
+                Console.WriteLine("No se puede hacer uso de objetos de tipo Char para la operacion logica");
                 return "????";
+            }
             //cadena                
             else if (val1.StartsWith("\"") || val2.StartsWith("\""))
+            {
+                Console.WriteLine("No se puede hacer uso de objetos de tipo String para la operacion logica");
                 return "????";
+            }
             //--------VALORES VALIDOS
             //bool      
             if (val1.Contains("verdadero") || val1.Contains("falso"))
@@ -794,7 +674,7 @@ namespace OLC2_Proyecto2.Gramatica
                 if (v1.Contains("verdadero") || v2.Contains("verdadero"))
                     return "verdadero";
                 else
-                    return "false";
+                    return "falso";
             }
             else if (operador.Equals("&&"))
             {
@@ -825,6 +705,7 @@ namespace OLC2_Proyecto2.Gramatica
             if (val1.Contains("????") || val2.Contains("????"))
                 return "????";
             MessageBox.Show("1." + val1 + " 2." + val2);
+            //OBTENER LOS VALORES A OPERAR
             #region OBTENER
             //id
             if (val1.StartsWith("@@"))
@@ -915,7 +796,12 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("int") && tipo2.Equals("bool"))
             {
-                resultado = "????";
+                int f = 0;
+                if (v2.Contains("verdadero"))
+                    f = 1;
+
+                if (Int32.Parse(v1) > f)
+                    resultado = "verdadero";
             }
             #endregion
 
@@ -1127,7 +1013,12 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("int") && tipo2.Equals("bool"))
             {
-                resultado = "????";
+                int f = 0;
+                if (v2.Contains("verdadero"))
+                    f = 1;
+
+                if (Int32.Parse(v1) < f)
+                    resultado = "verdadero";
             }
             #endregion
 
@@ -1338,7 +1229,12 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("int") && tipo2.Equals("bool"))
             {
-                resultado = "????";
+                int f = 0;
+                if (v2.Contains("verdadero"))
+                    f = 1;
+
+                if (Int32.Parse(v1) >= f)
+                    resultado = "verdadero";
             }
             #endregion
 
@@ -1550,7 +1446,12 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("int") && tipo2.Equals("bool"))
             {
-                resultado = "????";
+                int f = 0;
+                if (v2.Contains("verdadero"))
+                    f = 1;
+
+                if (Int32.Parse(v1) <= f)
+                    resultado = "verdadero";
             }
             #endregion
 
@@ -1761,7 +1662,12 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("int") && tipo2.Equals("bool"))
             {
-                resultado = "????";
+                int f = 0;
+                if (v2.Contains("verdadero"))
+                    f = 1;
+
+                if (Int32.Parse(v1) == f)
+                    resultado = "verdadero";
             }
             #endregion
 
@@ -1974,7 +1880,12 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("int") && tipo2.Equals("bool"))
             {
-                resultado = "????";
+                int f = 0;
+                if (v2.Contains("verdadero"))
+                    f = 1;
+
+                if (Int32.Parse(v1) != f)
+                    resultado = "verdadero";
             }
             #endregion
 
@@ -2128,7 +2039,18 @@ namespace OLC2_Proyecto2.Gramatica
                 tipo2 = "int";
                 v2 = val2;
             }
-
+            //Double
+            Double valNumericoD = 0.0;
+            if (double.TryParse(val1, out valNumericoD))
+            {
+                tipo1 = "double";
+                v1 = val1;
+            }
+            if (double.TryParse(val2, out valNumericoD))
+            {
+                tipo2 = "double";
+                v2 = val2;
+            }
             //caracter
             if (val1.Contains("'"))
             {
@@ -3330,6 +3252,140 @@ namespace OLC2_Proyecto2.Gramatica
 
             return suma;
         }
+
+
+        //--------- REALIZAR INCREMENTO FALTA
+        public static string realizarIncremento(Ambito am, string incre)
+        {
+            //Double
+            Double valNumericoD = 0.0;
+            int valNumericoI = 0;
+            if (double.TryParse(incre, out valNumericoD))
+            {
+                return (Convert.ToDouble(incre) + 1).ToString();
+            }
+            //Int
+            else if (int.TryParse(incre, out valNumericoI))
+            {
+                return (Convert.ToInt32(incre) + 1).ToString();
+            }
+            //Char
+            else if (incre.Contains("'"))
+            {
+                char[] my = incre.ToCharArray();
+                return ( 1 + my[0]).ToString();
+            }
+            //Id
+            else if (incre.Contains("@"))
+            {
+                string va = incre.Substring(2);
+                Variables v = new Variables(va, "", "", "", "");
+                Boolean ff = Ambito.AumentarValorVariable(am,v);
+                if (ff)
+                {
+                    Variables vv = Ambito.obtenerValorVariable(am, incre);
+                    return vv.valor;
+                }
+                return "";
+            }
+            //Objeto
+            //Si es algo mas
+            else
+            {
+                return "";
+            }
+        }
+
+        //--------- REALIZAR INCREMENTO FALTA
+        public static string realizarDecremento(Ambito am, string incre)
+        {
+            //Double
+            Double valNumericoD = 0.0;
+            int valNumericoI = 0;
+            if (double.TryParse(incre, out valNumericoD))
+            {
+                return (Convert.ToDouble(incre) - 1).ToString();
+            }
+            //Int
+            else if (int.TryParse(incre, out valNumericoI))
+            {
+                return (Convert.ToInt32(incre) - 1).ToString();
+            }
+            //Char
+            else if (incre.Contains("'"))
+            {
+                char[] my = incre.ToCharArray();
+                return (my[0]-1).ToString();
+            }
+            //Id
+            else if (incre.Contains("@"))
+            {
+                string va = incre.Substring(2);
+                Variables v = new Variables(va, "", "", "", "");
+                Boolean ff = Ambito.DisminuirValorVariable(am, v);
+                if (ff)
+                {
+                    Variables vv = Ambito.obtenerValorVariable(am, incre);
+                    return vv.valor;
+                }
+                return "";
+            }
+            //Objeto
+            //Si es algo mas
+            else
+            {
+                return "";
+            }
+        }
+
+        //--------- OBTENER LOS VALORES DE LAS DIMENSIONES ARREGLO
+        public static void obtenerDimensionesArreglo(Ambito ambito)
+        {
+            int c = 0;
+            foreach (string hijo in dimensiones)
+            {
+                string val = "";
+                if (hijo.Contains("@@"))
+                {
+                    Variables aux = Ambito.obtenerValorVariable(ambito, hijo);
+                    val = aux.valor;
+                }
+                else
+                    val = hijo;
+
+                if (c == 0)
+                    dim1 = val;
+                else if (c == 1)
+                    dim2 = val;
+                else
+                    dim3 = val;
+
+                c++;
+            }
+        }
+
+        //--------- LIMPIAR LOS VALORES DEL ARREGLO
+        public static ArrayList obtenerValoresArreglo(Ambito ambito, string valores)
+        {
+            ArrayList nuevo = new ArrayList();
+
+            string[] words = valores.Split(',');
+            foreach (string word in words)
+            {
+                string val = "";
+                if (word.Contains("@@"))
+                {
+                    Variables aux = Ambito.obtenerValorVariable(ambito, word);
+                    val = aux.valor;
+                    nuevo.Add(val);
+                }
+                else
+                    nuevo.Add(word);
+            }
+            return nuevo;
+        }
+
+
 
     }
 }

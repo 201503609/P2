@@ -14,15 +14,14 @@ namespace OLC2_Proyecto2.Gramatica
         public string nombre;
         public ArrayList Herencias = new ArrayList();   //Para saber a que clases hereda
         public ArrayList VariablesC = new ArrayList();  //Para saber que variables tiene la clase
-        public ArrayList ArreglosC = new ArrayList();
+        public ArrayList ArreglosC = new ArrayList();   //Para saber que arreglos tiene la clase
         public ArrayList FuncionesC = new ArrayList();  //Para saber que funciones tiene la clase
         public ArrayList MetodosC = new ArrayList();    //Para saber que metodos tiene la clase
-        public ArrayList CiclosSen = new ArrayList();   //Para saber en que sentencias o ciclo estoy
 
         public static ArrayList clases = new ArrayList();       //Para almacenar las clases
 
         //CONSTRUCTOR
-        public Clases(string n, ArrayList h, ArrayList v, ArrayList f, ArrayList m)
+        public Clases(string n, ArrayList her, ArrayList var, ArrayList arr, ArrayList fun, ArrayList met)
         {
             this.nombre = n;
         }
@@ -52,52 +51,23 @@ namespace OLC2_Proyecto2.Gramatica
 
 
         //----------------------------------VARIABLES
-        //Insertar Variable a la clase
-        public static Boolean insertarVariableC(string nomCla, Variables v)
+        //Insertar Variable sin valor a la clase
+        public static Boolean insertarVariableEnClase(string nomCla, Variables v)
         {
-            Boolean flag1, flag2;
             foreach (Clases hijo in clases)
             {
                 if (hijo.nombre.Equals(nomCla))
                 {
-                    //Verificar que el tipo del valor este bien
-                    flag1 = Variables.comprobacionTipo(v);
-                    //Verificar que no exista 
-                    flag2 = Variables.existenciaVariable(v);
-
-                    if (flag1 == true && flag2 == false)
-                    {
                         hijo.VariablesC.Add(v);
                         Console.WriteLine ("Se inserto la variable " + v.nombre + " ");
-                    }
-                   
-                    
                 }
             }
             return true;
         }
-        //Insertar Variable a la clase
-        public static Boolean insertarVariableC1(string nomCla, Variables v)
-        {
-            Boolean flag2;
-            foreach (Clases hijo in clases)
-            {
-                if (hijo.nombre.Equals(nomCla))
-                {
-                    //Verificar que no exista 
-                    flag2 = Variables.existenciaVariable(v);
-
-                    if (flag2 == false)
-                    {
-                        hijo.VariablesC.Add(v);
-                        Console.WriteLine("Se inserto la variable " + v.nombre + " ");
-                    }
 
 
-                }
-            }
-            return true;
-        }
+
+
 
         //Obtener valor de una variable de la clase
         public static string obtenerValorVariable(string nomCla, string nomVar)
