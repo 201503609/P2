@@ -52,6 +52,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSS\templated-introspect\Class1.cs" />
+    <Compile Include="Draw.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Draw.Designer.cs">
+      <DependentUpon>Draw.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,10 +69,18 @@
     <Compile Include="Gramatica\Ambito.cs" />
     <Compile Include="Gramatica\Arreglos.cs" />
     <Compile Include="Gramatica\Clases.cs" />
+    <Compile Include="Gramatica\Dibujar.cs" />
+    <Compile Include="Gramatica\ErroresLex.cs" />
+    <Compile Include="Gramatica\ErroresSem.cs" />
+    <Compile Include="Gramatica\ErroresSin.cs" />
+    <Compile Include="Gramatica\Funciones.cs" />
     <Compile Include="Gramatica\Gramatica.cs" />
+    <Compile Include="Gramatica\Nodo.cs" />
+    <Compile Include="Gramatica\NodoFuncion.cs" />
     <Compile Include="Gramatica\Recorrido.cs" />
     <Compile Include="Gramatica\ReporteTS.cs" />
     <Compile Include="Gramatica\Sintactico.cs" />
+    <Compile Include="Gramatica\TablaSimbolos.cs" />
     <Compile Include="Gramatica\Variables.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,6 +96,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="CSS\templated-introspect\assets\fonts\fontawesome-webfont.eot" />
+    <None Include="CSS\templated-introspect\assets\fonts\fontawesome-webfont.ttf" />
+    <None Include="CSS\templated-introspect\assets\fonts\fontawesome-webfont.woff" />
+    <None Include="CSS\templated-introspect\assets\fonts\fontawesome-webfont.woff2" />
+    <None Include="CSS\templated-introspect\assets\fonts\FontAwesome.otf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -94,7 +115,32 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="CSS\templated-introspect\assets\css\font-awesome.min.css" />
+    <Content Include="CSS\templated-introspect\assets\css\main.css" />
+    <Content Include="CSS\templated-introspect\assets\fonts\fontawesome-webfont.svg" />
+    <Content Include="CSS\templated-introspect\assets\js\jquery.min.js" />
+    <Content Include="CSS\templated-introspect\assets\js\main.js" />
+    <Content Include="CSS\templated-introspect\assets\js\skel.min.js" />
+    <Content Include="CSS\templated-introspect\assets\js\util.js" />
+    <Content Include="CSS\templated-introspect\CREDITS.txt" />
+    <Content Include="CSS\templated-introspect\elements.html" />
+    <Content Include="CSS\templated-introspect\generic.html" />
+    <Content Include="CSS\templated-introspect\images\banner.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic01.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic02.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic03.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic04.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic05.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic06.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic07.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic08.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic09.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic10.jpg" />
+    <Content Include="CSS\templated-introspect\images\pic11.jpg" />
+    <Content Include="CSS\templated-introspect\index.html" />
+    <Content Include="CSS\templated-introspect\LICENSE.txt" />
+  </ItemGroup>
   <ItemGroup>
     <COMReference Include="WINGRAPHVIZLib">
       <Guid>{052DB09C-95F7-43BD-B7F8-492373D1151E}</Guid>

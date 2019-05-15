@@ -217,6 +217,7 @@ namespace OLC2_Proyecto2.Gramatica
             //--------------------------------------------INSTANCIA DE CLASE 4.8.2
             DECLARACIONES.Rule      = AMBITO + TIPO + L_ID + FIN_DECLA
                                     | TIPO + L_ID + FIN_DECLA;
+
             //AMBITOS
             AMBITO.Rule             = publico
                                     | privado;
@@ -228,11 +229,12 @@ namespace OLC2_Proyecto2.Gramatica
                                     | caden
                                     | id;       //Si en dado caso no me sale es por esto
             //LISTA DE ID
-            L_ID.Rule               = MakePlusRule(L_ID,Coma, id);
+            L_ID.Rule               = MakePlusRule(L_ID, Coma, id);
             //FIN DE LA DECLARACION
             FIN_DECLA.Rule          = PuntoComa
                                     | Igual + EXPRESION + PuntoComa
                                     | Igual + nuevo + id + TparA + TparC + PuntoComa; //Para los objetos
+            FIN_DECLA.ErrorRule     = SyntaxError + PuntoComa;
             //EXPRESION
             EXPRESION.Rule          = EXPRESION + Tor + EXPRESION
                                     | EXPRESION + Tand + EXPRESION
@@ -265,65 +267,73 @@ namespace OLC2_Proyecto2.Gramatica
                                     | f;
             //--------------------------------------------ASIGNACION 4.7.2 4.7.6
             ASIGNA.Rule             = id + Igual + EXPRESION + PuntoComa;
+            ASIGNA.ErrorRule        = SyntaxError + PuntoComa;
             //--------------------------------------------INCREMENTO 4.7.3
             INCREMENTO.Rule         = P + incremento + PuntoComa;
+            INCREMENTO.ErrorRule    = SyntaxError + PuntoComa;
             //--------------------------------------------DECREMENTO 4.7.4
-            DECREMENTO.Rule         = P + decremento + PuntoComa;
+            DECREMENTO.Rule          = P + decremento + PuntoComa;
+            DECREMENTO.ErrorRule    = SyntaxError + PuntoComa;
             //--------------------------------------------DECLARACION DE ARREGLOS 4.7.5
             DECLA_ARRE.Rule         = AMBITO + TIPO + array + L_ID + DIMENSIONES + FIN_ARRE
                                     | TIPO + array + L_ID + DIMENSIONES + FIN_ARRE;
 
-            DIMENSIONES.Rule        = MakePlusRule(DIMENSIONES,VAL_DIM);
+            DIMENSIONES.Rule        = MakePlusRule(DIMENSIONES, VAL_DIM);
 
             VAL_DIM.Rule            = TcorA + EXPRESION + TcorC;
 
             FIN_ARRE.Rule           = PuntoComa
-                                    //| Igual + OBJETOS + PuntoComa
                                     | Igual + TllaA + VAL_AA + TllaC + PuntoComa;
+            FIN_ARRE.ErrorRule      = SyntaxError + PuntoComa;
 
-            VAL_AA.Rule             = MakePlusRule(VAL_AA ,Coma , VAL_AA1);
+            VAL_AA.Rule             = MakePlusRule(VAL_AA, Coma, VAL_AA1);
 
             VAL_AA1.Rule            = TllaA + VAA + TllaC;
 
             VAA.Rule                = MakePlusRule(VAA, Coma, EXPRESION);
             //--------------------------------------------REASIGNACION DE ARREGLOS 4.7.7
             USO_ARRE.Rule           = id + DIMENSIONES + Igual + EXPRESION + PuntoComa;
+            USO_ARRE.ErrorRule      = SyntaxError + PuntoComa;
             //--------------------------------------------4.8.3 
-            OBJETOS.Rule            = //L_ID1 + PARAMETROS + PuntoComa
-                                     L_ID1 + PARAMETROS
-                                    //L_ID1 + PuntoComa
+            OBJETOS.Rule            = L_ID1 + PARAMETROS
                                     | L_ID1;
 
-            L_ID1.Rule              = MakePlusRule(L_ID1 ,Punto ,id);
+            L_ID1.Rule              = MakePlusRule(L_ID1, Punto, id);
 
             PARAMETROS.Rule         = TparA + TparC
                                     | TparA + L_PARAM + TparC;
 
-            L_PARAM.Rule            = MakePlusRule(L_PARAM ,Coma ,EXPRESION);
+            L_PARAM.Rule            = MakePlusRule(L_PARAM, Coma, EXPRESION);
             //--------------------------------------------4.8.4 REASINACION DE VAR GLOBALES
             AS_OBJ.Rule             = AMBITO + OBJETOS + Igual + EXPRESION + PuntoComa
                                     | OBJETOS + Igual + EXPRESION + PuntoComa
                                     | AMBITO + OBJETOS + PuntoComa
                                     | OBJETOS + PuntoComa;
+            AS_OBJ.ErrorRule        = SyntaxError + PuntoComa;
             //--------------------------------------------METODO MAIN 4.8.7
             MAIN.Rule               = main + TparA + TparC + TllaA + TllaC
                                     | main + TparA + TparC + TllaA + INS_CLA + TllaC;
+            MAIN.ErrorRule          = SyntaxError + TllaC;
             //--------------------------------------------FUNCION SIN RETORNO 4.8.8
             FUNCION_SR.Rule         = AMBITO + id + voir + OVER + PARAMETROS1 + TllaA + TllaC
                                     | id + voir + OVER + PARAMETROS1 + TllaA + TllaC
                                     | AMBITO + id + voir + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC
                                     | id + voir + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC;
+            FUNCION_SR.ErrorRule    = SyntaxError + TllaC;
 
             OVER.Rule               = over
                                     | Empty;
 
             PARAMETROS1.Rule        = TparA + TparC
                                     | TparA + L_PARAM1 + TparC;
-            L_PARAM1.Rule           = MakePlusRule( L_PARAM1 ,Coma ,PARAM1);
+
+            L_PARAM1.Rule           = MakePlusRule(L_PARAM1, Coma, PARAM1);
+
             PARAM1.Rule             = TIPO + id;
             //--------------------------------------------RETURN 4.8.9
-            RETORNO.Rule            =  retorno + PuntoComa
-                                    |  retorno + EXPRESION + PuntoComa;
+            RETORNO.Rule            = retorno + PuntoComa
+                                    | retorno + EXPRESION + PuntoComa;
+            RETORNO.Rule            = SyntaxError + PuntoComa;
             //--------------------------------------------FUNCION CON RETORNO 4.8.10
             FUNCION_CR.Rule         = AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + TllaC
                                     | AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + TllaC
@@ -331,20 +341,25 @@ namespace OLC2_Proyecto2.Gramatica
                                     | AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC
                                     | AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC
                                     | AMBITO + id + TIPO + id + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC;
+            FUNCION_CR.ErrorRule    = SyntaxError + TllaC;
             //--------------------------------------------IMPRIMIR 4.9
             IMPRIMIR.Rule           = imprimir + TparA + EXPRESION + TparC + PuntoComa;
+            IMPRIMIR.ErrorRule      = SyntaxError + PuntoComa;
             //--------------------------------------------SHOW 4.10
             SHOW.Rule               = show + TparA + EXPRESION + Coma + EXPRESION + TparC + PuntoComa;
+            SHOW.ErrorRule          = SyntaxError + PuntoComa;
             //--------------------------------------------SENTENCIA IF 4.11.1
             SI.Rule                 = si + TparA + EXPRESION + TparC + TllaA + TllaC + EXTRA_SI
                                     | si + TparA + EXPRESION + TparC + TllaA + TllaC + L_SINO + EXTRA_SI
                                     | si + TparA + EXPRESION + TparC + TllaA + INS_CLA + TllaC + EXTRA_SI
                                     | si + TparA + EXPRESION + TparC + TllaA + INS_CLA + TllaC + L_SINO + EXTRA_SI;
+            SI.ErrorRule            = SyntaxError + TllaC;
 
-            L_SINO.Rule             = MakePlusRule(L_SINO ,SINO);
+            L_SINO.Rule             = MakePlusRule(L_SINO, SINO);
 
             SINO.Rule               = sino + si + TparA + EXPRESION + TparC + TllaA + TllaC
                                     | sino + si + TparA + EXPRESION + TparC + TllaA + INS_CLA + TllaC;
+            SINO.ErrorRule          = SyntaxError + TllaC;
 
             EXTRA_SI.Rule           = sino + TllaA + TllaC
                                     | sino + TllaA + INS_CLA + TllaC
@@ -352,40 +367,52 @@ namespace OLC2_Proyecto2.Gramatica
             //--------------------------------------------FOR 
             FOR.Rule                = para + TparA + V_FOR + EXPRESION + PuntoComa + ACTUALIZACION + TparC + TllaA + TllaC
                                     | para + TparA + V_FOR + EXPRESION + PuntoComa + ACTUALIZACION + TparC + TllaA + INS_CLA + TllaC;
+            FOR.ErrorRule           = SyntaxError + TllaC;
+
             V_FOR.Rule              = ASIGNA
                                     | DECLARACIONES;
+
             ACTUALIZACION.Rule      = P + incremento
                                     | P + decremento;
             //--------------------------------------------REPETIR
             REPETIR.Rule            = repetir + TparA + EXPRESION + TparC + TllaA + TllaC
-                                    | repetir + TparA + EXPRESION + TparC + TllaA + INS_CLA + TllaC; ;
+                                    | repetir + TparA + EXPRESION + TparC + TllaA + INS_CLA + TllaC;
+            REPETIR.ErrorRule       = SyntaxError + TllaC;
             //--------------------------------------------MIENTRAS
             MIENTRAS.Rule           = mientras + TparA + EXPRESION + TparC + TllaA + TllaC
                                     | mientras + TparA + EXPRESION + TparC + TllaA + INS_CLA + TllaC;
+            MIENTRAS.ErrorRule      = SyntaxError + TllaC;
             //--------------------------------------------COMPROBAR
             COMPROBAR.Rule          = comprobar + TparA + EXPRESION + TparC + TllaA + TllaC
                                     | comprobar + TparA + EXPRESION + TparC + TllaA + L_CASO + TllaC;
+            COMPROBAR.ErrorRule     = SyntaxError + TllaC;
 
-            L_CASO.Rule             =  MakePlusRule(L_CASO ,CASO);
+            L_CASO.Rule             = MakePlusRule(L_CASO, CASO);
 
             CASO.Rule               = caso + EXPRESION + DosPuntos + INS_CLA
                                     | defecto + DosPuntos + INS_CLA;
 
             SALIR.Rule              = salir + PuntoComa;
+            SALIR.ErrorRule         = SyntaxError + PuntoComa;
             //--------------------------------------------HACER MIENTRAS
             HACER.Rule              = hacer + TllaA + TllaC + mient + TparA + EXPRESION + TparC + PuntoComa
                                     | hacer + TllaA + INS_CLA + TllaC + mient + TparA + EXPRESION + TparC + PuntoComa;
+            HACER.ErrorRule         = SyntaxError + PuntoComa;
             //--------------------------------------------CONTINUAR
             CONTINUAR.Rule          = continuar + PuntoComa;
+            CONTINUAR.ErrorRule     = SyntaxError + PuntoComa;
             //--------------------------------------------ADD FIGURE
             FIGURE.Rule             = addFigure + TparA + FIGURAS + TparC + PuntoComa;
+            FIGURE.ErrorRule        = SyntaxError + PuntoComa;
 
             FIGURAS.Rule            = circle + TparA + L_PARAM + TparC
                                     | triangle + TparA + L_PARAM + TparC
                                     | square + TparA + L_PARAM + TparC
                                     | line + TparA + L_PARAM + TparC;
+            FIGURAS.ErrorRule       = SyntaxError + TparC;
             //--------------------------------------------FUCION NATIVA FIGURE
             ADD_FIGURE.Rule         = figure + TparA + EXPRESION + TparC + PuntoComa;
+            ADD_FIGURE.ErrorRule    = SyntaxError + PuntoComa;
 
 
             #endregion
@@ -403,8 +430,11 @@ namespace OLC2_Proyecto2.Gramatica
 
             this.MarkTransient(S, INSTRUCCIONES);
 
-            this.MarkPunctuation(":",";",",",".","=","(",")","{","}","[","]");
-            this.MarkPunctuation("array","importar","continuar", "hacer", "mientras", "comprobar", "caso", "defecto", "salir", "while", "Repeat", "for", "if", "clase","else","print","show","return","main","clase");
+            this.MarkPunctuation(":", ";", ",", ".", "=", "(", ")", "{", "}", "[", "]");
+            this.MarkPunctuation("array", "importar", "continuar", "hacer", "mientras");
+            this.MarkPunctuation("comprobar", "caso", "defecto", "salir", "while", "Repeat");
+            this.MarkPunctuation("for", "if", "clase", "else", "print", "show", "return", "main", "clase");
+            this.MarkPunctuation("void", "addFigure", "Figure");
 
             #endregion
         }

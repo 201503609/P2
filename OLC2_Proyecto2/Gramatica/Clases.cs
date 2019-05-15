@@ -118,30 +118,6 @@ namespace OLC2_Proyecto2.Gramatica
             }
             return n;
         }
-
-        //----------------------------------ARREGLOS
-        public static Boolean insertarArregloc(string nomCla, Arreglos arr, ArrayList Dimensiones)
-        {
-            Boolean flag1, flag2;
-            foreach (Clases hijo in clases)
-            {
-                if (hijo.nombre.Equals(nomCla))
-                {
-                    //Verificar que el tipo del valor este bien
-                    //flag1 = Variables.comprobacionTipo(v);
-                    //Verificar que no exista 
-                    //flag2 = Variables.existenciaVariable(v);
-
-                    /*if (flag1 == true && flag2 == false)
-                    {
-                        hijo.VariablesC.Add(v);
-                        Console.WriteLine("Se inserto la variable " + v.nombre + " ");
-                    }*/
-
-
-                }
-            }
-            return true;
-        }
+        
     }
 }

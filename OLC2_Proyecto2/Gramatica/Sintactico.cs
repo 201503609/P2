@@ -21,13 +21,35 @@ namespace OLC2_Proyecto2.Gramatica
             ParseTree arbol = p.Parse(cadena);
             ParseTreeNode raiz = arbol.Root;
 
-            if(raiz == null)
+            if (raiz == null)
+            {
+                for (int i = 0; i < arbol.ParserMessages.Count(); i++)
+                {
+                    ErroresSin errs = new ErroresSin(arbol.ParserMessages.ElementAt(i).Message,
+                        arbol.ParserMessages.ElementAt(i).Location.Line,
+                        arbol.ParserMessages.ElementAt(i).Location.Column,
+                        arbol.ParserMessages.ElementAt(i).ParserState.ExpectedTerminals.ToString());
+                    ErroresSin.erroresSin.Add(errs);
+                }
                 return false;
+            }
             else
             {
                 generarImagen(raiz);
+                Recorrido.nodosImportantes.Clear();
+                Recorrido.funcionesClase.Clear();
                 MessageBox.Show("Imagen generada correctamente");
-                Recorrido.ejecutar(raiz,null);
+                
+
+                Recorrido.primeraLectura(raiz,null);
+                Ambito diego = new Ambito(null);
+                //MessageBox.Show("FUNCIONES ENCONTRADAS " + Recorrido.funcionesClase.Count);
+                foreach (Nodo hijo in Recorrido.nodosImportantes)
+                {
+                    Recorrido.ejecutar(hijo.root,diego);
+                }
+
+                //Recorrido.ejecutar(raiz, null);
                 return true;
             }
         }
@@ -41,9 +63,9 @@ namespace OLC2_Proyecto2.Gramatica
         private static void crear_Archivo(String grafo, string nombre)
         {
             System.IO.StreamWriter archivo = new System.IO.StreamWriter("C:\\Grafos\\" + nombre + ".txt");
-            
+
             archivo.Write(grafo + " ");
-           
+
             archivo.Close();
 
         }

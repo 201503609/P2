@@ -12,7 +12,6 @@ namespace OLC2_Proyecto2.Gramatica
     {
         public string nombre, tipo, ambito, valor, pertence;
         public static ArrayList variables = new ArrayList();
-        public static int h;
 
         //Constructor
         public Variables(string n, string t, string a, string v, string p)
@@ -57,7 +56,7 @@ namespace OLC2_Proyecto2.Gramatica
                 if (Double.TryParse(v.valor, out valorNumerico))
                     f = true;
             }
-            else if (v.tipo.Equals("bool"))
+            else if (v.tipo.Equals("bool") || v.tipo.Equals("bool"))
             {
                 if (v.valor.Contains("true") || v.valor.Contains("verdadero") ||
                     v.valor.Contains("falso") || v.valor.Contains("false"))
@@ -65,7 +64,7 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else
             {
-                MessageBox.Show(v.tipo + "######");
+                MessageBox.Show("Tipo no soportado "  + v.tipo);
             }
             if (f == false)
                 Console.WriteLine("EL TIPO NO ES EL ADECUADO DE " + v.nombre);
@@ -120,7 +119,7 @@ namespace OLC2_Proyecto2.Gramatica
                 if (Double.TryParse(nuevoValor, out valorNumerico))
                     f = true;
             }
-            else if (v.tipo.Equals("bool"))
+            else if (v.tipo.Equals("bool") || v.tipo.Equals("bool"))
             {
                 if (nuevoValor.Contains("true") || nuevoValor.Contains("verdadero") ||
                     nuevoValor.Contains("falso") || nuevoValor.Contains("false"))
@@ -128,7 +127,7 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else
             {
-                MessageBox.Show(v.tipo + "######");
+                MessageBox.Show("Tipo no soportado " + v.tipo);
             }
             if (f == false)
                 Console.WriteLine("EL TIPO NO ES EL ADECUADO DE " + v.nombre);
