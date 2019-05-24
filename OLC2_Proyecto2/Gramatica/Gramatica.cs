@@ -337,10 +337,10 @@ namespace OLC2_Proyecto2.Gramatica
             //--------------------------------------------FUNCION CON RETORNO 4.8.10
             FUNCION_CR.Rule         = AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + TllaC
                                     | AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + TllaC
-                                    | AMBITO + id + TIPO + id + OVER + PARAMETROS1 + TllaA + TllaC
+                                    //| AMBITO + id + TIPO + id + OVER + PARAMETROS1 + TllaA + TllaC
                                     | AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC
-                                    | AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC
-                                    | AMBITO + id + TIPO + id + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC;
+                                    | AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC;
+                                    //| AMBITO + id + TIPO + id + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC;
             FUNCION_CR.ErrorRule    = SyntaxError + TllaC;
             //--------------------------------------------IMPRIMIR 4.9
             IMPRIMIR.Rule           = imprimir + TparA + EXPRESION + TparC + PuntoComa;

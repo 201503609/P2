@@ -34,6 +34,12 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.txtConsola = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Tipo1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Identificador = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Tipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Ambito = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Valor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.archivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crearArchivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,18 +60,12 @@
             this.manualDeUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.informacionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Tipo1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Identificador = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Tipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Ambito = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Valor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             this.tbConsola.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -73,7 +73,7 @@
             this.panel1.Controls.Add(this.tabControl1);
             this.panel1.Location = new System.Drawing.Point(12, 45);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(619, 280);
+            this.panel1.Size = new System.Drawing.Size(792, 364);
             this.panel1.TabIndex = 0;
             // 
             // tabControl1
@@ -81,7 +81,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(616, 280);
+            this.tabControl1.Size = new System.Drawing.Size(789, 365);
             this.tabControl1.TabIndex = 1;
             this.tabControl1.Visible = false;
             // 
@@ -89,10 +89,10 @@
             // 
             this.tbConsola.Controls.Add(this.tabPage1);
             this.tbConsola.Controls.Add(this.tabPage2);
-            this.tbConsola.Location = new System.Drawing.Point(12, 362);
+            this.tbConsola.Location = new System.Drawing.Point(12, 438);
             this.tbConsola.Name = "tbConsola";
             this.tbConsola.SelectedIndex = 0;
-            this.tbConsola.Size = new System.Drawing.Size(617, 377);
+            this.tbConsola.Size = new System.Drawing.Size(792, 301);
             this.tbConsola.TabIndex = 0;
             // 
             // tabPage1
@@ -101,16 +101,16 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(609, 348);
+            this.tabPage1.Size = new System.Drawing.Size(784, 272);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Consola";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // txtConsola
             // 
-            this.txtConsola.Location = new System.Drawing.Point(-3, 0);
+            this.txtConsola.Location = new System.Drawing.Point(-3, 3);
             this.txtConsola.Name = "txtConsola";
-            this.txtConsola.Size = new System.Drawing.Size(616, 352);
+            this.txtConsola.Size = new System.Drawing.Size(788, 349);
             this.txtConsola.TabIndex = 0;
             this.txtConsola.Text = "";
             // 
@@ -120,10 +120,50 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(609, 348);
+            this.tabPage2.Size = new System.Drawing.Size(784, 272);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Tabla Simbolos";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Tipo1,
+            this.Identificador,
+            this.Tipo,
+            this.Ambito,
+            this.Valor});
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowTemplate.Height = 24;
+            this.dataGridView1.Size = new System.Drawing.Size(609, 352);
+            this.dataGridView1.TabIndex = 0;
+            // 
+            // Tipo1
+            // 
+            this.Tipo1.HeaderText = "Tipo1";
+            this.Tipo1.Name = "Tipo1";
+            // 
+            // Identificador
+            // 
+            this.Identificador.HeaderText = "Identificador";
+            this.Identificador.Name = "Identificador";
+            // 
+            // Tipo
+            // 
+            this.Tipo.HeaderText = "Tipo";
+            this.Tipo.Name = "Tipo";
+            // 
+            // Ambito
+            // 
+            this.Ambito.HeaderText = "Ambito";
+            this.Ambito.Name = "Ambito";
+            // 
+            // Valor
+            // 
+            this.Valor.HeaderText = "Valor";
+            this.Valor.Name = "Valor";
             // 
             // menuStrip1
             // 
@@ -135,7 +175,7 @@
             this.ayudaToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(640, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(815, 28);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -281,51 +321,11 @@
             this.informacionToolStripMenuItem.Text = "Informacion";
             this.informacionToolStripMenuItem.Click += new System.EventHandler(this.informacionToolStripMenuItem_Click);
             // 
-            // dataGridView1
-            // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Tipo1,
-            this.Identificador,
-            this.Tipo,
-            this.Ambito,
-            this.Valor});
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(609, 352);
-            this.dataGridView1.TabIndex = 0;
-            // 
-            // Tipo1
-            // 
-            this.Tipo1.HeaderText = "Tipo1";
-            this.Tipo1.Name = "Tipo1";
-            // 
-            // Identificador
-            // 
-            this.Identificador.HeaderText = "Identificador";
-            this.Identificador.Name = "Identificador";
-            // 
-            // Tipo
-            // 
-            this.Tipo.HeaderText = "Tipo";
-            this.Tipo.Name = "Tipo";
-            // 
-            // Ambito
-            // 
-            this.Ambito.HeaderText = "Ambito";
-            this.Ambito.Name = "Ambito";
-            // 
-            // Valor
-            // 
-            this.Valor.HeaderText = "Valor";
-            this.Valor.Name = "Valor";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(640, 751);
+            this.ClientSize = new System.Drawing.Size(815, 751);
             this.Controls.Add(this.tbConsola);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
@@ -337,9 +337,9 @@
             this.tbConsola.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

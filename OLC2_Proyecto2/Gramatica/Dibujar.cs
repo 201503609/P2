@@ -17,10 +17,11 @@ namespace OLC2_Proyecto2.Gramatica
 
         public void dibujo(ArrayList figuras)
         {
+            
+            drawForm.Size = new Size(1500, 1500);
+            drawForm.StartPosition = FormStartPosition.CenterScreen;
             drawForm.Show();
-            drawForm.Size = new Size(800, 800);
             drawForm.Text = nom;
-
 
             foreach (string hijo in figuras)
             {
@@ -31,18 +32,21 @@ namespace OLC2_Proyecto2.Gramatica
                     //--Color,Radio,Solido,PosX,PosY
                     //---1   , 2   ,3     , 4  ,5
                     bool flag = false;
+                    string color = limpiarColor(words[1]);
                     if (words[3].Contains("verdadero"))
                         flag = true;
-                    DrawCircle(Convert.ToInt32(words[2]), Convert.ToInt32(words[4]), Convert.ToInt32(words[5]), flag, words[1]);
+                    DrawCircle(convertirInt(words[2]), convertirInt(words[4]), convertirInt(words[5]), flag, color);
                 }
                 else if (words[0].Equals("triangulo"))
                 {
                     //--Color,Solido,PosX,PosY,PosX1,PosY1,PosX2,PosY2
                     //-- 1   , 2    ,3   ,4   ,5    ,6    ,7     ,8
                     bool flag = false;
+                    string color = limpiarColor(words[1]);
+                    //Console.WriteLine("." + (color) + ".");
                     if (words[2].Contains("verdadero"))
                         flag = true;
-                    DrawTriangle(Convert.ToInt32(words[3]), Convert.ToInt32(words[4]), Convert.ToInt32(words[5]), Convert.ToInt32(words[6]), Convert.ToInt32(words[7]), Convert.ToInt32(words[8]), flag, words[1]);
+                    DrawTriangle(convertirInt(words[3]), convertirInt(words[4]), convertirInt(words[5]), convertirInt(words[6]), convertirInt(words[7]), convertirInt(words[8]), flag, color);
 
                 }
                 else if (words[0].Equals("rectangulo"))
@@ -50,22 +54,20 @@ namespace OLC2_Proyecto2.Gramatica
                     //--Color,Solido,PosX,PosY,Alto,Ancho
                     //--1    ,2     ,3   ,4   ,5   ,6
                     bool flag = false;
+                    string color = limpiarColor(words[1]);
                     if (words[2].Contains("verdadero"))
                         flag = true;
-                    DrawSquare(Convert.ToInt32(words[3]), Convert.ToInt32(words[4]), Convert.ToInt32(words[6]), Convert.ToInt32(words[5]), flag, words[1]);
+                    DrawSquare(convertirInt(words[3]), convertirInt(words[4]), convertirInt(words[6]), convertirInt(words[5]), flag, color);
 
                 }
                 else if (words[0].Equals("linea"))
                 {
                     //--Color,InicioX,InicioY,FinX,FinY,Grosor
                     //--1    ,2      ,3      ,4   ,5    ,6
-                    DrawLine(Convert.ToInt32(words[2]), Convert.ToInt32(words[3]), Convert.ToInt32(words[4]), Convert.ToInt32(words[5]), Convert.ToInt32(words[6]),words[1]);
+                    string color = limpiarColor(words[1]);
+                    DrawLine(convertirInt(words[2]), convertirInt(words[3]), convertirInt(words[4]), convertirInt(words[5]), convertirInt(words[6]),color);
                 }
             }
-
-
-            DrawLine(0, 0, 200, 200, 0, "red");
-            DrawLine(200, 0, 0, 200, 0, "red");
 
         }
 
@@ -120,7 +122,6 @@ namespace OLC2_Proyecto2.Gramatica
 
         private void DrawTriangle(int PosX1, int PosY1, int PosX2, int PosY2, int PosX3, int PosY3, bool relleno, string color)
         {
-
             Graphics g = drawForm.CreateGraphics();
             Color _color = System.Drawing.ColorTranslator.FromHtml(color);
             if (relleno == false)
@@ -170,5 +171,37 @@ namespace OLC2_Proyecto2.Gramatica
              };
             g.DrawPolygon(blackPen, curvePoints);
         }
+
+        public int convertirInt(string val1)
+        {
+            int valor = 0;
+            // Int
+            int valorNumerico = 0;
+            if (int.TryParse(val1, out valorNumerico))
+            {
+                valor = Convert.ToInt32(val1);
+            }
+            //Double
+            Double valorNumerico1 = 0;
+            if (Double.TryParse(val1, out valorNumerico1))
+            {
+                valor = (int)(Convert.ToDouble(val1));
+            }
+            return valor;
+        }
+
+        public string limpiarColor(string col)
+        {
+            string cAux = "";
+            if (col.Contains("\""))
+            {
+                cAux = col.Substring(1, col.Length - 2);
+            }
+            else
+                cAux = col;
+
+            return cAux;
+        }
+
     }
 }

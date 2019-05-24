@@ -22,6 +22,7 @@ namespace OLC2_Proyecto2
 
         public Form1()
         {
+            this.StartPosition = FormStartPosition.CenterScreen;
             InitializeComponent();
         }
 
@@ -42,7 +43,7 @@ namespace OLC2_Proyecto2
                     el.limpiarArregloLex();
                     ErroresSin sin = new ErroresSin();
                     sin.limpiarArregloSin();
-
+                    Recorrido.figuras.Clear();
 
                     int selectedTab = tabControl1.SelectedIndex;
                     Control ctrl = tabControl1.Controls[selectedTab].Controls[0];

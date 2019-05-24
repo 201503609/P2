@@ -39,10 +39,10 @@ namespace OLC2_Proyecto2.Gramatica
                 Recorrido.nodosImportantes.Clear();
                 Recorrido.funcionesClase.Clear();
                 MessageBox.Show("Imagen generada correctamente");
-                
 
-                Recorrido.primeraLectura(raiz,null);
                 Ambito diego = new Ambito(null);
+                diego.nombreA = "Diego";
+                Recorrido.primeraLectura(raiz,diego);
                 //MessageBox.Show("FUNCIONES ENCONTRADAS " + Recorrido.funcionesClase.Count);
                 foreach (Nodo hijo in Recorrido.nodosImportantes)
                 {

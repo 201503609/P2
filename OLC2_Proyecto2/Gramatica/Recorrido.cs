@@ -55,6 +55,7 @@ namespace OLC2_Proyecto2.Gramatica
 
         #endregion
 
+        public static int contF = 0;
         public static ArrayList nodosImportantes = new ArrayList();
         public static ArrayList funcionesClase = new ArrayList();
         public static ArrayList parametrosEnviar = new ArrayList();
@@ -68,15 +69,15 @@ namespace OLC2_Proyecto2.Gramatica
                 case "INICIO":
                     foreach (ParseTreeNode hijo in root.ChildNodes)
                     {
-                        primeraLectura(hijo, null);
+                        primeraLectura(hijo, anterior);
                     }
                     return "";
 
                 // --- DECLARACION DE VARIABLES
                 #region DECLARACIONES
                 case "DECLARACIONES":
-                    Ambito nuevaDecla = new Ambito(anterior);
-                    Nodo n = new Nodo(root, nuevaDecla);
+                    //Ambito nuevaDecla = new Ambito(anterior);
+                    Nodo n = new Nodo(root, anterior);
                     nodosImportantes.Add(n);
                     //MessageBox.Show("VIENE UNA DECLARACION DE VARIABLE");
                     return "";
@@ -118,8 +119,8 @@ namespace OLC2_Proyecto2.Gramatica
                 // --- DECLARACION DE ARREGLOS
                 #region DECLA_ARRE
                 case "DECLA_ARRE":
-                    Ambito nuevoArre = new Ambito(anterior);
-                    Nodo n1 = new Nodo(root, nuevoArre);
+                    //Ambito nuevoArre = new Ambito(anterior);
+                    Nodo n1 = new Nodo(root, anterior);
                     nodosImportantes.Add(n1);
                     //MessageBox.Show("VIENE UNA DECLARACION DE ARREGLO");
                     return "";
@@ -151,18 +152,17 @@ namespace OLC2_Proyecto2.Gramatica
 
                 #region CLASE
                 case "CLASE":
-                    Ambito nuevo = new Ambito(anterior);
                     //clase + id + IMPORTACIONES + TllaA + INS_CLA + TllaC
                     if (root.ChildNodes.Count == 3)//tiene importanciones e instrucciones
                     {
-                        primeraLectura(root.ChildNodes[2], nuevo);
+                        primeraLectura(root.ChildNodes[2], anterior);
                     }
                     else if (root.ChildNodes.Count == 2) // pueden ser dos producciones
                     {
                         //clase + id + TllaA + INS_CLA + TllaC
                         if (root.ChildNodes[1].ToString().Equals("INS_CLA"))
                         { //no tiene importanciones pero si instrucciones
-                            primeraLectura(root.ChildNodes[1], nuevo);
+                            primeraLectura(root.ChildNodes[1], anterior);
                         }
                         //clase + id + IMPORTACIONES + TllaA + TllaC
                         else    //tiene importacion pero no instruccion 
@@ -210,14 +210,12 @@ namespace OLC2_Proyecto2.Gramatica
                 // --- FUNCION SIN RETORNO
                 #region FUNCION_SR
                 case "FUNCION_SR":
-                    Ambito FuncionSR = new Ambito(anterior);
-
                     //id + voir + OVER + PARAMETROS1 + TllaA + TllaC                        3
                     if (root.ChildNodes.Count == 3)
                     {
                         string phrase = root.ChildNodes[0].ToString();
                         string[] words = phrase.Split(' ');
-                        NodoFuncion nf = new NodoFuncion(words[0], root, FuncionSR);
+                        NodoFuncion nf = new NodoFuncion(words[0], root, anterior);
                         funcionesClase.Add(nf);
 
                     }
@@ -228,7 +226,7 @@ namespace OLC2_Proyecto2.Gramatica
                         {
                             string phrase = root.ChildNodes[1].ToString();
                             string[] words = phrase.Split(' ');
-                            NodoFuncion nf = new NodoFuncion(words[0], root, FuncionSR);
+                            NodoFuncion nf = new NodoFuncion(words[0], root, anterior);
                             funcionesClase.Add(nf);
                         }
                         //id + voir + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC              4
@@ -236,7 +234,7 @@ namespace OLC2_Proyecto2.Gramatica
                         {
                             string phrase = root.ChildNodes[0].ToString();
                             string[] words = phrase.Split(' ');
-                            NodoFuncion nf = new NodoFuncion(words[0], root, FuncionSR);
+                            NodoFuncion nf = new NodoFuncion(words[0], root, anterior);
                             funcionesClase.Add(nf);
                         }
 
@@ -246,7 +244,7 @@ namespace OLC2_Proyecto2.Gramatica
                     {
                         string phrase = root.ChildNodes[1].ToString();
                         string[] words = phrase.Split(' ');
-                        NodoFuncion nf = new NodoFuncion(words[0], root, FuncionSR);
+                        NodoFuncion nf = new NodoFuncion(words[0], root, anterior);
                         funcionesClase.Add(nf);
                     }
 
@@ -256,15 +254,21 @@ namespace OLC2_Proyecto2.Gramatica
                 // --- FUNCION CON RETORNO
                 #region FUNCION_CR
                 case "FUNCION_CR":
-                    //--- NO ME SIRVE AHORITA
+                    if (root.ChildNodes.Count == 6)
+                    {
+                        string phrase = root.ChildNodes[1].ToString();
+                        string[] words = phrase.Split(' ');
+                        NodoFuncion nf = new NodoFuncion(words[0], root, anterior);
+                        funcionesClase.Add(nf);
+                    }
                     return "";
                 #endregion
 
                 // --- MAIN
                 #region MAIN
                 case "MAIN":
-                    Ambito metodoMain = new Ambito(anterior);
-                    Nodo n2 = new Nodo(root, metodoMain);
+                    //Ambito metodoMain = new Ambito(anterior);
+                    Nodo n2 = new Nodo(root, anterior);
                     nodosImportantes.Add(n2);
                     //MessageBox.Show("VIENE EL MAIN");
                     return "";
@@ -466,7 +470,7 @@ namespace OLC2_Proyecto2.Gramatica
                         var = false;
 
                         valorVal = ejecutar(root.ChildNodes[2], anterior);            //Obtener valor
-                        MessageBox.Show(" Valor: " + valorVal);
+                        //MessageBox.Show(" Valor: " + valorVal);
 
                         //Almacenar Variables en alguna lista o algo
                         Variables vvv;
@@ -506,7 +510,7 @@ namespace OLC2_Proyecto2.Gramatica
                         var = false;
 
                         valorVal = ejecutar(root.ChildNodes[3], anterior);        //Obtener valor
-                        MessageBox.Show(" Valor: " + valorVal);
+                        //MessageBox.Show(" Valor: " + valorVal);
 
                         //Almacenar Variables en alguna lista o algo
                         Variables vvv;
@@ -950,11 +954,14 @@ namespace OLC2_Proyecto2.Gramatica
                         string met = ejecutar(root.ChildNodes[0], anterior);
                         string vals = ejecutar(root.ChildNodes[1], anterior);
 
-                        string[] words = vals.Split(',');
-                        parametrosEnviar.Clear();
-                        foreach (string hijo in words)
+                        if (!vals.Equals(""))
                         {
-                            parametrosEnviar.Add(hijo);
+                            string[] words = vals.Split(',');
+                            parametrosEnviar.Clear();
+                            foreach (string hijo in words)
+                            {
+                                parametrosEnviar.Add(hijo);
+                            }
                         }
 
                         return met + ";" + vals;
@@ -1023,17 +1030,20 @@ namespace OLC2_Proyecto2.Gramatica
                     if (root.ChildNodes.Count == 1)
                     {
                         //------- ESTO ES UNA LLAMADA A UNA FUNCION
+
                         string obj = ejecutar(root.ChildNodes[0], anterior);
 
                         //BUSCAR LA FUNCION Y EJECUTARLA
                         string[] words = obj.Split(';');
                         //Funciones f1 = Ambito.buscarFuncion(words[0], anterior);
-                        MessageBox.Show("Funcion: " + words[0] + " valores: " + words[1]);
+
                         foreach (NodoFuncion hijo in funcionesClase)
                         {
-                            if (hijo.nombreF.Equals(words[0]))
+                            if (hijo.nombreF.ToLower().Equals(words[0].ToLower()))
                             {
-                                ejecutar(hijo.root, hijo.ambito);
+                                Ambito nuevo = new Ambito(anterior);
+                                nuevo.nombreA = "FUNCION";
+                                return ejecutar(hijo.root, nuevo);
                             }
                         }
                     }
@@ -1058,10 +1068,12 @@ namespace OLC2_Proyecto2.Gramatica
                         nuevo.salida = false;
                         nuevo.continuar = false;
                         nuevo.retorno = false;
+                        nuevo.nombreA = "Main";
 
                         ejecutar(root.ChildNodes[0], nuevo);
 
                         TablaSimbolos.pasarTabla(nuevo);
+                        TablaSimbolos.pasarTabla(anterior);
                         ReporteTS.reporteTablaSimbolos(nuevo, "Main");
                         return "";
                     }
@@ -1070,20 +1082,7 @@ namespace OLC2_Proyecto2.Gramatica
                 //----------------------------FUNCIONES
                 #region FUNCION_SR
                 case "FUNCION_SR":
-
                     //id + voir + OVER + PARAMETROS1 + TllaA + TllaC            3   sin instrucciones
-                    if (root.ChildNodes.Count == 3) //VACIA
-                    {
-                        //NOMBRE DE LA VARIABLE 
-                        phrase = root.ChildNodes[0].ToString();
-                        words = phrase.Split(' ');
-                        string nomFun = words[0];
-
-                        string ov = ejecutar(root.ChildNodes[1], anterior);     //Aplica Override
-
-                        Ambito nuevo = new Ambito(anterior);
-                        //Parametros de la funcion
-                    }
                     //AMBITO + id + voir + OVER + PARAMETROS1 + TllaA + TllaC       4   sin instrucciones
                     //id + voir + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC;         4 
 
@@ -1092,41 +1091,46 @@ namespace OLC2_Proyecto2.Gramatica
                     {
                         // -- Obtener el ambito de la funcion
                         ambito = ejecutar(root.ChildNodes[0], anterior);
+
                         // -- Nombre de la funcion
                         phrase = root.ChildNodes[1].ToString();
                         words = phrase.Split(' ');
                         string nombreFunc = words[0];
+
                         // -- Over
                         string ov = ejecutar(root.ChildNodes[2], anterior);
 
                         // -- Desde aca puedo empezar a probar a enviar el nuevo ambito
-                        Ambito nuevo = new Ambito(anterior);
-                        nuevo.retorno = true;
+                        string pp = "";
+
                         // -- VER LO DE LOS PARAMETROS
                         parametrosRecibidos.Clear();
                         ejecutar(root.ChildNodes[3], anterior);
-                        if (parametrosRecibidos.Count == parametrosEnviar.Count)
+
+
+
+
+                        // -- Hacer algo con los parametros
+                        if ((parametrosRecibidos.Count == parametrosEnviar.Count) || (parametrosEnviar.Count == 0 && parametrosRecibidos.Count == 0))
                         {
                             Variables vvv;
                             for (int a = 0; a < parametrosEnviar.Count; a++)
                             {
                                 Variables aux = (Variables)parametrosRecibidos[a];
                                 vvv = new Variables(aux.nombre, aux.tipo, "", parametrosEnviar[a].ToString(), "");
-                                Boolean fInserto = Ambito.insertarVarConValor(vvv, nuevo);              //INSERTAR VARIABLE EN EL AMBITO
-                                //if (fInserto == true)
-                                //    MessageBox.Show("hola");
-                                //else
-                                //    MessageBox.Show("que tal");
-                                //    Clases.insertarVariableEnClase(nombreClase, vvv);
+                                pp += limpiarVariables2(vvv.valor, anterior) + ",";
+
+                                Boolean fInserto = Ambito.insertarVarConValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
+                                //MessageBox.Show("Inserto en la funcion: " + fInserto);
                             }
-                            ejecutar(root.ChildNodes[4], nuevo);
+                            MessageBox.Show("Funcion a ejecutar: " + nombreFunc + " \n valores: " + pp);
+                            ejecutar(root.ChildNodes[4], anterior);
                         }
                         else
                         {
                             ErroresSem es = new ErroresSem("Los parametros que se reciben no coinciden con los que se envian", 0, 0);
                             es.insertarErrSem(es);
                         }
-                        nuevo.retorno = false;
                     }
 
                     return "";
@@ -1188,10 +1192,12 @@ namespace OLC2_Proyecto2.Gramatica
                     //retorno + EXPRESION + PuntoComa
                     if (root.ChildNodes.Count == 1)
                     {
-                        if (puedeRetornar == true)
+                        MessageBox.Show("Entra");
+                        if (anterior.retorno == true)
                         {
                             retornoFlag = true;
                             valorRetorno = limpiarVariables(ejecutar(root.ChildNodes[0], anterior), anterior);
+                            MessageBox.Show("h" + valorRetorno);
                             return valorRetorno;
                         }
                         else
@@ -1203,6 +1209,77 @@ namespace OLC2_Proyecto2.Gramatica
                     return "";
                 #endregion
 
+                #region FUNCION_CR
+                case "FUNCION_CR":
+                    //AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + TllaC                                           5
+                    //AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + TllaC                     6
+                    //AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC                                 6
+                    //AMBITO + id + array + TIPO + DIMENSIONES + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC           7
+
+                    //AMBITO + id + TIPO + OVER + PARAMETROS1 + TllaA + INS_CLA + TllaC
+                    if (root.ChildNodes.Count == 6)
+                    {
+                        if (root.ChildNodes[2].ToString().Equals("TIPO"))
+                        {
+                            // -- Obtener el ambito de la funcion
+                            ambito = ejecutar(root.ChildNodes[0], anterior);
+
+                            // -- Nombre de la funcion
+                            phrase = root.ChildNodes[1].ToString();
+                            words = phrase.Split(' ');
+                            string nombreFunc = words[0];
+
+                            // -- Tipo
+                            tipo = ejecutar(root.ChildNodes[2], anterior);
+
+                            // -- Over
+                            string ov = ejecutar(root.ChildNodes[3], anterior);
+
+                            // -- Desde aca puedo empezar a probar a enviar el nuevo ambito
+                            string pp = "";
+
+                            // -- VER LO DE LOS PARAMETROS
+                            parametrosRecibidos.Clear();
+                            ejecutar(root.ChildNodes[4], anterior);
+                            anterior.retorno = true;
+                            retornoFlag = false;
+
+                            // -- Hacer algo con los parametros
+                            //MessageBox.Show(parametrosRecibidos.Count + "," + parametrosEnviar.Count);
+                            if ((parametrosRecibidos.Count == parametrosEnviar.Count) || (parametrosEnviar.Count == 0 && parametrosRecibidos.Count == 0))
+                            {
+                                Variables vvv;
+                                for (int a = 0; a < parametrosEnviar.Count; a++)
+                                {
+                                    Variables aux = (Variables)parametrosRecibidos[a];
+                                    vvv = new Variables(aux.nombre, aux.tipo, "", parametrosEnviar[a].ToString(), "");
+                                    pp += limpiarVariables2(vvv.valor, anterior) + ",";
+
+                                    Boolean fInserto = Ambito.insertarVarConValor(vvv, anterior);              //INSERTAR VARIABLE EN EL AMBITO
+                                    if (fInserto == false)
+                                    {
+                                        Boolean cambio = Ambito.CambiarValorVariable(anterior, vvv);
+                                    }
+                                }
+                                MessageBox.Show("Funcion a ejecutar: " + nombreFunc + " \n valores: " + pp);
+                                string rr = ejecutar(root.ChildNodes[5], anterior);
+                                MessageBox.Show("Retorna " + rr);
+                                return rr;
+                            }
+                            else
+                            {
+                                ErroresSem es = new ErroresSem("Los parametros que se reciben no coinciden con los que se envian", 0, 0);
+                                es.insertarErrSem(es);
+                            }
+
+                            retornoFlag = false;
+                            anterior.retorno = false;
+                        }
+
+                    }
+                    return "";
+
+                #endregion
                 //---------------------------- FUNCIONES NATIVAS   --DE aca para abajo, todo ok en teoria
                 #region IMPRIMIR
                 case "IMPRIMIR":
@@ -3490,12 +3567,12 @@ namespace OLC2_Proyecto2.Gramatica
             //cadena    /*error*/            
             if (val1.Contains("\""))
             {
-                v1 = val1.Substring(1, val1.Length - 2);
+                v1 = val1.Substring(1, val1.Length - 3); ///SI FALLA EL CODIGO, AQUI LA CAGUE
                 tipo1 = "string";
             }
             if (val2.Contains("\""))
             {
-                v2 = val2.Substring(1, val2.Length - 2);
+                v2 = val2.Substring(1, val2.Length - 3);
                 tipo2 = "string";
             }
             //bool      /*error*/
@@ -3521,7 +3598,7 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("int") && tipo2.Equals("string"))
             {
-                suma = v1 + " " + v2;
+                suma = v1 + v2;
                 suma = "\"" + suma + "\"";
             }
             else if (tipo1.Equals("int") && tipo2.Equals("double"))
@@ -3550,22 +3627,22 @@ namespace OLC2_Proyecto2.Gramatica
             #region V1_String
             if (tipo1.Equals("string") && tipo2.Equals("int"))
             {
-                suma = v1 + " " + v2;
+                suma = v1 + v2;
                 suma = "\"" + suma + "\"";
             }
             else if (tipo1.Equals("string") && tipo2.Equals("string"))
             {
-                suma = v1 + " " + v2;
+                suma = v1 + v2;
                 suma = "\"" + suma + "\"";
             }
             else if (tipo1.Equals("string") && tipo2.Equals("double"))
             {
-                suma = v1 + " " + v2;
+                suma = v1 + v2;
                 suma = "\"" + suma + "\"";
             }
             else if (tipo1.Equals("string") && tipo2.Equals("char"))
             {
-                suma = v1 + " " + v2;
+                suma = v1 + v2;
                 suma = "\"" + suma + "\"";
             }
             else if (tipo1.Equals("string") && tipo2.Equals("bool"))
@@ -3583,7 +3660,7 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("double") && tipo2.Equals("string"))
             {
-                suma = v1 + " " + v2;
+                suma = v1 + v2;
                 suma = "\"" + suma + "\"";
             }
             else if (tipo1.Equals("double") && tipo2.Equals("double"))
@@ -3618,7 +3695,7 @@ namespace OLC2_Proyecto2.Gramatica
             }
             else if (tipo1.Equals("char") && tipo2.Equals("string"))
             {
-                suma = v1 + " " + v2;
+                suma = v1 + v2;
                 suma = "\"" + suma + "\"";
             }
             else if (tipo1.Equals("char") && tipo2.Equals("double"))
@@ -3692,6 +3769,12 @@ namespace OLC2_Proyecto2.Gramatica
                     return "false";
             }
             #endregion
+
+            if (suma.Contains("????"))
+            {
+                ErroresSem es = new ErroresSem("Existe un error con los valores de la suma + ", 0, 0);
+                es.insertarErrSem(es);
+            }
             return suma;
         }
 
@@ -3946,6 +4029,11 @@ namespace OLC2_Proyecto2.Gramatica
             }
             #endregion
 
+            if (suma.Contains("????"))
+            {
+                ErroresSem es = new ErroresSem("Existe un error con los valores de la resta - ", 0, 0);
+                es.insertarErrSem(es);
+            }
             return suma;
         }
 
@@ -4222,6 +4310,11 @@ namespace OLC2_Proyecto2.Gramatica
             }
             #endregion
 
+            if (suma.Contains("????"))
+            {
+                ErroresSem es = new ErroresSem("Existe un error con los valores de la multiplicacion * ", 0, 0);
+                es.insertarErrSem(es);
+            }
             return suma;
         }
 
@@ -4486,6 +4579,12 @@ namespace OLC2_Proyecto2.Gramatica
                 suma = "????";
             }
             #endregion
+
+            if (suma.Contains("????") )
+            {
+                ErroresSem es = new ErroresSem("Existe un error con los valores de la division / ", 0, 0);
+                es.insertarErrSem(es);
+            }
 
             return suma;
         }
@@ -4929,8 +5028,35 @@ namespace OLC2_Proyecto2.Gramatica
             //Int
             //Double
 
+     
             return v1;
         }
+
+        public static string limpiarVariables2(string val1, Ambito actual)
+        {
+            string v1 = "";
+
+            //objetos
+
+            //id
+            if (val1.StartsWith("@@"))
+            {
+                val1 = val1.Substring(2);
+                Variables auxiliar = Ambito.obtenerValorVariable(actual, val1);
+                v1 = auxiliar.valor;
+            }
+            //caracter
+            //cadena    /*error*/            
+            else
+                v1 = val1;
+            //bool      /*error*/
+            //Arreglos (--- LA EXPRESION YA DEVUELVE EL VALOR ---)
+            //Int
+            //Double
+
+            return v1;
+        }
+
 
         public static string limpiarFigura(string val, Ambito actual)
         {

@@ -11,11 +11,13 @@ namespace OLC2_Proyecto2.Gramatica
     {
         public ParseTreeNode root;
         public Ambito ambito;
+        public string am = "";
 
         public Nodo(ParseTreeNode root, Ambito ambito)
         {
             this.root = root;
             this.ambito = ambito;
+            this.am = "";
         }
 
     }

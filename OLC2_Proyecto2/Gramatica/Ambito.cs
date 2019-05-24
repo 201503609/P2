@@ -15,6 +15,7 @@ namespace OLC2_Proyecto2.Gramatica
         public Boolean salida = false;
         public Boolean continuar = false;
         public Boolean retorno = false;
+        public string nombreA = "";
        
 
         //Va a tener variables 
@@ -28,6 +29,7 @@ namespace OLC2_Proyecto2.Gramatica
             this.salida = false;
             this.continuar = false;
             this.retorno = false;
+            this.nombreA = "";
         }
 
 
@@ -63,13 +65,14 @@ namespace OLC2_Proyecto2.Gramatica
             if (flag == false)  //SI NO EXISTE
             {
                 actual.variableAmbito.Add(variable);
+                Console.WriteLine("Se ha insertado la variable " + variable.nombre + " " + variable.valor);
                 return true;
             }
             else
             {
                 ErroresSem es = new ErroresSem("Ya existe una variable con el nombre: " + variable.nombre, 0, 0);
                 es.insertarErrSem(es);
-                Console.WriteLine("Ya existe una variable con el nombre: " + variable.nombre);
+                //Console.WriteLine("Ya existe una variable con el nombre: " + variable.nombre);
                 return false;
             }
         }
@@ -78,27 +81,23 @@ namespace OLC2_Proyecto2.Gramatica
         {
             Boolean flag = false, flag1 = false;
             //--------- VERIFICAR SI YA EXISTE UNA VARIABLE CON EL MISMO NOMBRE
-            Ambito aux = actual;
-            //while (aux != null)
-            //{
-            foreach (Variables v in aux.variableAmbito)
+            foreach (Variables v in actual.variableAmbito)
             {
                 if (v.nombre.Equals(variable.nombre))
+                {
                     flag = true;
+                    break;
+                }
             }
-            aux = aux.anterior;
-            //}
             //--------- VERIFICAR SI YA EXISTE UN ARREGLO CON EL MISMO NOMBRE
-            aux = actual;
-            //while (aux != null)
-            //{
-            foreach (Arreglos v in aux.arreglosAmbito)
+            foreach (Arreglos v in actual.arreglosAmbito)
             {
                 if (v.nombre.Equals(variable.nombre))
+                {
                     flag = true;
+                    break;
+                }
             }
-            aux = aux.anterior;
-            //}
 
             //--------INSERTAR O NO LA VARIABLE
             if (flag == false)
@@ -122,6 +121,7 @@ namespace OLC2_Proyecto2.Gramatica
                 if (flag1 == true)
                 {
                     actual.variableAmbito.Add(variable);
+                    //Console.WriteLine("Se ha insertado la variable " + variable.nombre + " " + variable.valor +". " + actual.nombreA);
                     return true;
                 }
                 else
@@ -136,7 +136,7 @@ namespace OLC2_Proyecto2.Gramatica
             {
                 ErroresSem es = new ErroresSem("Ya existe una variable con el nombre: " + variable.nombre, 0, 0);
                 es.insertarErrSem(es);
-                Console.WriteLine("Ya existe una variable con el nombre: " + variable.nombre);
+                //Console.WriteLine("Ya existe una variable con el nombre: " + variable.nombre);
                 return false;
             }
 
@@ -151,18 +151,28 @@ namespace OLC2_Proyecto2.Gramatica
             else
                 n = nombre;
             Boolean flag = false;
+            Boolean encontrado = false;
             Ambito aux = actual;
             Variables vv = null;
+            int i = 0;
             while (aux != null)
             {
+                //MessageBox.Show("Ambito " + aux.nombreA);
+                i++;          
                 foreach (Variables v in aux.variableAmbito)
                 {
-                    if (v.nombre.Equals(n))
+                    //MessageBox.Show("Variable " + v.nombre);
+                    if (v.nombre.ToLower().Equals(n.ToLower())  && encontrado == false)
                     {
                         vv = v;
+                        encontrado = true;
                         flag = true;
                         break;
                     }
+                }
+                if (encontrado == true)
+                {
+                    break;
                 }
                 aux = aux.anterior;
             }
@@ -210,17 +220,15 @@ namespace OLC2_Proyecto2.Gramatica
                         if (flag1 == true)
                         {
                             v.valor = variable.valor;
-                            Console.WriteLine("El valor de la variable " + v.nombre + " ha sido modificado a " + v.valor + ".");
+                            //Console.WriteLine("El valor de la variable " + v.nombre + " ha sido modificado a " + v.valor + ".");
                             return true;
                         }
                         else
                         {
                             ErroresSem es = new ErroresSem("El valor nuevo que se desea asignar a la variable " + v.nombre + " no es compatible.", 0, 0);
                             es.insertarErrSem(es);
-                            Console.WriteLine("El valor de la variable " + v.nombre + " es incorrecto.");
                             return false;
                         }
-                        break;
                     }
                 }
                 aux = aux.anterior;
@@ -230,7 +238,7 @@ namespace OLC2_Proyecto2.Gramatica
             {
                 ErroresSem es = new ErroresSem("La variable " + variable.nombre + " no existe en ningun ambito.", 0, 0);
                 es.insertarErrSem(es);
-                Console.WriteLine("La variable " + variable.nombre + " no existe en ningun ambito.");
+                //Console.WriteLine("La variable " + variable.nombre + " no existe en ningun ambito.");
                 return false;
             }
             else
@@ -294,7 +302,7 @@ namespace OLC2_Proyecto2.Gramatica
             {
                 ErroresSem es = new ErroresSem("La variable " + variable.nombre + " no existe en ningun ambito.", 0, 0);
                 es.insertarErrSem(es);
-                Console.WriteLine("La variable " + variable.nombre + " no existe en ningun ambito.");
+                //Console.WriteLine("La variable " + variable.nombre + " no existe en ningun ambito.");
                 return false;
             }
             else
@@ -358,7 +366,7 @@ namespace OLC2_Proyecto2.Gramatica
             {
                 ErroresSem es = new ErroresSem("La variable " + variable.nombre + " no existe", 0, 0);
                 es.insertarErrSem(es);
-                Console.WriteLine("La variable " + variable.nombre + " no existe en ningun ambito.");
+                //Console.WriteLine("La variable " + variable.nombre + " no existe en ningun ambito.");
                 return false;
             }
             else
